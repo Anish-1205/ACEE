@@ -1,0 +1,66 @@
+# Implementation status
+
+Last updated: 2026-11-01. Test evidence: [TESTING.md](TESTING.md).
+
+## Phases
+
+| Phase | Scope | Status |
+|---|---|---|
+| A | Repo/asset inspection, requirements, architecture, monorepo | ✅ Done — [ARCHITECTURE.md](ARCHITECTURE.md) |
+| B | Database (27 models, 2 migrations), API, auth, RBAC, foundational tests | ✅ Done |
+| C | Website + 3-language design system | ✅ Done |
+| D | Registration, eligibility engine, profile | ✅ Done |
+| E | Coaching, counseling, documents, application tracking | ✅ Done |
+| F | Admin, counselor, trainer dashboards | ✅ Done (web) |
+| G | Android screens on shared API | 🟡 Built, typechecked, bundled — **not run on a device** |
+| H | Notifications, reports, translations, security, tests | ✅ Done (in-app notifications; external channels are adapters only) |
+| I | Deployment docs, Android build config, handoff | ✅ Docs + EAS config — **no APK/AAB built, nothing deployed** |
+
+## Acceptance criteria
+
+| Criterion | Status | Evidence |
+|---|---|---|
+| Student registers/logs in (web) | ✅ | E2E + API tests |
+| Selects en/te/hi; persists | ✅ | E2E (switch + reload), i18n tests |
+| Completes profile | ✅ web · ⬜ Android | Profile page; Android links the web profile flow only via dashboard completion % |
+| Preliminary eligibility with reasons, rule version, history | ✅ | Engine + API + E2E |
+| Coaching registration with capacity/waitlist | ✅ | API concurrency test + E2E |
+| Counseling booking/cancel/reschedule, no double booking | ✅ | API concurrency test + E2E |
+| Upload permitted document | ✅ | API + E2E |
+| Track internal application progress | ✅ | API + E2E |
+| Counselor: assigned students, appointments, notes | ✅ | API + E2E |
+| Trainer: batches, attendance | ✅ | API + E2E |
+| Admin: students, coaching, appointments, documents, scheme rules, reports, announcements | ✅ | E2E (documents, rules), pages for all modules |
+| Android runs on a device, same backend, 3 languages | 🟡 | Same API client + i18n package; bundle builds; **device run pending** |
+| Web works on desktop and mobile | ✅ | E2E desktop + Pixel 7 project |
+| Students can't see each other's records; private docs protected; server-side authz | ✅ | API isolation tests + E2E 403 checks |
+
+## Files (by area)
+
+- `apps/api/prisma/schema.prisma`, `apps/api/prisma/migrations/*`, `apps/api/prisma/seed.ts`
+- `apps/api/src/{app,server,config,db}.ts`, `apps/api/src/lib/*` (auth, audit, csv, notify, storage, tokens, errors), `apps/api/src/routes/*` (auth, me, eligibility, coaching, counseling, applications, documents, content, admin), `apps/api/scripts/provision-superadmin.ts`, `apps/api/test/*`
+- `packages/shared/src/*` (eligibility engine, schemas, roles, tokens, constants, API client), `packages/i18n/src/*` (en/te/hi resources, factory, formatters)
+- `apps/web/app/(public)/*` (12 public pages + invite), `apps/web/app/(portal)/{dashboard,counselor,trainer,admin}/*`, `apps/web/components/*`, `apps/web/lib/*`, `apps/web/proxy.ts`, `apps/web/e2e/*`
+- `apps/mobile/app/*` (welcome, login, register, eligibility, tabs: home/coaching/counseling/documents/more, application, notifications, settings), `apps/mobile/lib/*`, `apps/mobile/components/ui.tsx`, `app.json`, `eas.json`
+- `docs/*`, `README.md`, `.env.example`, `docker-compose.yml`
+
+## Known issues & limitations
+
+1. **Android not run on a device/emulator** (no SDK on the build machine) and **no APK/AAB built**.
+2. **External channels** (email, SMS, WhatsApp, push) are adapters that report "not configured"; only in-app notifications are delivered. OTP login returns "not available". `expo-notifications` is not installed yet.
+3. **Storage**: local private disk only; S3-compatible driver not written → single API instance. Appointment reminders run in-process (every 15 min).
+4. **Meeting links** are entered manually by counselors; no calendar/video integration.
+5. **Scheme rules** are seeded from the brochure and marked UNVERIFIED; **company details** unconfirmed. Both need ACEE action.
+6. **Android scope**: student features only (staff use the web console). Profile editing and the terms/privacy pages are not in the Android app yet.
+7. Admin-entered text (rule descriptions, trainer announcements, custom stage names without translations) is shown as entered; a few admin form labels on the stage editor are English-only.
+8. Locale is cookie-based, so every web page is dynamically rendered (no static caching, no per-language URLs/hreflang).
+9. `lint` = TypeScript checks; no ESLint rules configured.
+10. No automated retention purge, malware scanning, or web CSP (see [SECURITY.md](SECURITY.md)).
+11. Dark mode: tokens are centralised but no dark theme is shipped.
+
+## Next steps
+
+1. Run the Android app on a device ([manual checklist](TESTING.md#manual-android-smoke-checklist)) and produce a preview APK via EAS.
+2. ACEE: verify scheme rules and confirm business details; legal review of privacy/terms.
+3. Wire one SMS/WhatsApp provider and email (adapters in `apps/api/src/lib/notify.ts`), then real OTP.
+4. Add the S3 storage driver and a job runner before scaling beyond one API instance.

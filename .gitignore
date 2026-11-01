@@ -1,0 +1,15 @@
+node_modules
+.next
+dist
+.expo
+*.log
+.env
+.env.local
+apps/api/storage
+apps/api/src/generated
+test-results
+playwright-report
+android
+ios
+storage-test
+dist-smoke

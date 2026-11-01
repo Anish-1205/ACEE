@@ -1,0 +1,14 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: acee
+      POSTGRES_PASSWORD: acee_dev_password
+      POSTGRES_DB: acee
+    ports:
+      - "5433:5432"
+    volumes:
+      - acee_pg:/var/lib/postgresql/data
+      - ./docker/init-test-db.sql:/docker-entrypoint-initdb.d/init-test-db.sql:ro
+volumes:
+  acee_pg:

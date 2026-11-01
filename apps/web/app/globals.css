@@ -1,0 +1,25 @@
+@import 'tailwindcss';
+
+/* Brand tokens — mirror packages/shared/src/tokens.ts */
+@theme {
+  --color-navy: #102e5c;
+  --color-royal: #2155a3;
+  --color-gold: #f2be35;
+  --color-surface: #f5f8fc;
+  --color-orange: #e87832;
+  --color-ink: #0f1b2d;
+  --color-muted: #5b6b80;
+  --color-line: #dce3ee;
+  --color-success: #1e7f4f;
+  --color-warning: #9a6200;
+  --color-danger: #b3261e;
+  --font-sans: var(--font-noto), var(--font-noto-telugu), var(--font-noto-deva), system-ui, sans-serif;
+  --radius-card: 1rem;
+}
+
+/* Dark-mode-ready: components use semantic utilities; a future .dark scope can remap these tokens. */
+html { color: var(--color-ink); background: var(--color-surface); }
+body { min-height: 100vh; -webkit-font-smoothing: antialiased; }
+:lang(te), :lang(hi) { line-height: 1.7; }
+:focus-visible { outline: 3px solid var(--color-gold); outline-offset: 2px; }
+dialog::backdrop { background: rgb(15 27 45 / 0.5); }

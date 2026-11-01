@@ -1,0 +1,20 @@
+{
+  "name": "acee-global-education",
+  "private": true,
+  "packageManager": "pnpm@12.15.0",
+  "scripts": {
+    "dev:api": "pnpm --filter @acee/api dev",
+    "dev:web": "pnpm --filter @acee/web dev",
+    "dev:mobile": "pnpm --filter @acee/mobile start",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "db:up": "docker compose up -d db",
+    "db:migrate": "pnpm --filter @acee/api prisma:migrate",
+    "db:seed": "pnpm --filter @acee/api seed"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3",
+    "vitest": "^5.0.5"
+  }
+}
