@@ -30,7 +30,7 @@ export function PortalShell({ roles, nav, title, children }: { roles: Role[]; na
       <aside className="border-b border-line bg-navy text-white md:sticky md:top-0 md:h-screen md:border-b-0">
         <div className="flex items-center justify-between gap-2 px-4 py-4">
           <Link href="/" className="flex items-center gap-2">
-            <span className="rounded-md bg-white px-2 py-1.5"><img src={MAIN_SITE.logo} alt="ACEE Review Consultants" width={96} height={18} className="h-4 w-auto" /></span>
+            <span className="rounded-md bg-white px-2 py-1.5"><img src="/acee-logo.svg" alt="ACEE Review Consultants" width={96} height={18} className="h-4 w-auto" /></span>
             <span className="text-sm font-bold leading-tight">{title}</span>
           </Link>
           <button onClick={logout} className="rounded-lg px-2 py-2 text-xs text-white/80 hover:bg-white/10 md:hidden">{t('navigation:logout')}</button>

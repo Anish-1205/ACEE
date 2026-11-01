@@ -55,7 +55,7 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
           <ul className="divide-y divide-line text-sm">
             {s.documents.map((d) => (
               <li key={d.id} className="flex flex-wrap items-center justify-between gap-2 py-2">
-                <span>{t(`documents:categories.${d.category}`)} — <a href={`/api/v1/documents/${d.id}/download`} className="text-royal underline">{d.fileName}</a></span>
+                <span>{t(`documents:categories.${d.category}`)} — {d.fileName} <a href={`/api/v1/documents/${d.id}/download?inline=1`} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-royal underline">{t('documents:view')} ↗</a> <a href={`/api/v1/documents/${d.id}/download`} className="text-xs text-royal underline">{t('common:download')}</a></span>
                 <Badge tone={d.status === 'APPROVED' ? 'success' : d.status === 'REJECTED' ? 'danger' : 'info'}>{t(`documents:statuses.${d.status}`)}</Badge>
               </li>
             ))}

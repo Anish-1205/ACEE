@@ -152,7 +152,7 @@ export function DocumentQueue() {
           {q.data.items.map((d) => (
             <tr key={d.id}>
               <Td><Link className="text-royal underline" href={`/counselor/students/${d.owner?.id}`}>{d.owner?.fullName}</Link></Td>
-              <Td>{t(`documents:categories.${d.category}`)}<br /><a className="text-xs text-royal underline" href={`/api/v1/documents/${d.id}/download`}>{d.fileName}</a></Td>
+              <Td>{t(`documents:categories.${d.category}`)}<br /><span className="text-xs">{d.fileName}</span> <a href={`/api/v1/documents/${d.id}/download?inline=1`} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-royal underline">{t('documents:view')} ↗</a> <a className="text-xs text-royal underline" href={`/api/v1/documents/${d.id}/download`}>{t('common:download')}</a></Td>
               <Td>{formatDateTime(d.createdAt, lang)}</Td>
               <Td>
                 {d.status === 'PENDING' ? (

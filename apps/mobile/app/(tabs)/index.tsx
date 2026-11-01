@@ -24,7 +24,7 @@ export default function Home() {
   if (q.error || !q.data) return <Screen><ErrorView onRetry={() => q.refetch()} /></Screen>;
   const d = q.data;
   const actions: [string, Href][] = [
-    [t('navigation:checkEligibility'), '/eligibility'], [t('students:joinCoaching'), '/(tabs)/coaching'], [t('navigation:bookCounseling'), '/(tabs)/counseling'],
+    [t('students:completeProfile'), '/profile'], [t('navigation:checkEligibility'), '/eligibility'], [t('students:joinCoaching'), '/(tabs)/coaching'], [t('navigation:bookCounseling'), '/(tabs)/counseling'],
     [t('students:uploadDocuments'), '/(tabs)/documents'], [t('students:trackApplication'), '/application'], [`${t('navigation:notifications')}${d.unreadNotifications ? ` (${d.unreadNotifications})` : ''}`, '/notifications'],
   ];
   return (

@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { Pressable, Text, View } from 'react-native';
+import { Image, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { COUNTRIES, LANGUAGES, colors } from '@acee/shared';
@@ -21,8 +21,8 @@ export default function Welcome() {
           ))}
         </View>
         <View style={{ gap: 12 }}>
-          <View style={{ width: 64, height: 64, borderRadius: 16, backgroundColor: colors.crimson, alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ fontSize: 32, fontWeight: '900', color: colors.white }}>A</Text>
+          <View style={{ width: 72, height: 72, borderRadius: 36, backgroundColor: colors.white, alignItems: 'center', justifyContent: 'center' }}>
+            <Image source={require('../assets/emblem.png')} style={{ width: 52, height: 52 }} accessibilityIgnoresInvertColors accessibilityLabel="ACEE Review Consultants" />
           </View>
           <Text style={{ color: 'rgba(255,255,255,0.8)', fontWeight: '700', letterSpacing: 1 }}>{t('common:taglineSub')}</Text>
           <Text style={{ color: colors.white, fontSize: 32, fontWeight: '900', lineHeight: 42 }} accessibilityRole="header">{t('common:tagline')}</Text>

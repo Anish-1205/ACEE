@@ -1,7 +1,8 @@
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
-import { acceptInviteSchema, invitableRoles, inviteSchema, loginSchema, refreshSchema, registerSchema } from '@acee/shared';
+import { randomInt, timingSafeEqual } from 'node:crypto';
+import { acceptInviteSchema, forgotPasswordSchema, invitableRoles, inviteSchema, loginSchema, refreshSchema, registerSchema, resetPasswordSchema } from '@acee/shared';
 import { prisma } from '../db';
 import { config } from '../config';
 import {
@@ -11,7 +12,8 @@ import {
 import { HttpError, conflict, forbidden } from '../lib/errors';
 import { hashToken, newToken } from '../lib/tokens';
 import { audit } from '../lib/audit';
-import { notify } from '../lib/notify';
+import { notify, renderNotification } from '../lib/notify';
+import { mailConfigured, sendMail } from '../lib/mailer';
 import type { User } from '../generated/prisma/client';
 
 export const TERMS_VERSION = '2026-11-01';
@@ -88,7 +90,53 @@ export const authRoutes: FastifyPluginAsyncZod = async (app) => {
   /** Same as /me but 200 with null when signed out, so the public website does not log 401s. */
   app.get('/session', async (req) => ({ user: req.user ? publicUser(req.user) : null }));
 
-  /** OTP is an interface only until an SMS/email provider is configured; it never pretends to send. */
+  /**
+   * Forgot password: emails a 6-digit code. The response is identical whether or not the account exists,
+   * so it cannot be used to discover registered emails/mobiles.
+   */
+  app.post('/password/forgot', { config: { rateLimit: { max: 5, timeWindow: '1 minute' } }, schema: { body: forgotPasswordSchema } }, async (req) => {
+    if (!mailConfigured()) throw new HttpError(503, 'RESET_UNAVAILABLE', 'Password reset is not available right now. Please contact ACEE.');
+    const id = req.body.identifier.toLowerCase();
+    const user = await prisma.user.findFirst({ where: { ...(id.includes('@') ? { email: id } : { mobile: id }), status: 'ACTIVE' } });
+    if (user) {
+      const recent = await prisma.passwordReset.count({ where: { userId: user.id, createdAt: { gt: new Date(Date.now() - 3600_000) } } });
+      if (recent < 5) {
+        const code = String(randomInt(0, 1_000_000)).padStart(6, '0');
+        await prisma.passwordReset.create({ data: { userId: user.id, codeHash: hashToken(`${user.id}:${code}`), channel: 'email', expiresAt: new Date(Date.now() + 10 * 60_000), ip: req.ip } });
+        const { title, body } = renderNotification(user.preferredLanguage, 'passwordCode.title', 'passwordCode.body', { code });
+        await sendMail(user.email, title, body).catch((e) => req.log.error(e, 'password reset email failed'));
+        await audit(prisma, { actorId: user.id, action: 'password.reset_requested', entityType: 'User', entityId: user.id, ip: req.ip });
+      }
+    }
+    return { ok: true, channel: 'email' };
+  });
+
+  app.post('/password/reset', { ...strict, schema: { body: resetPasswordSchema } }, async (req) => {
+    const invalid = new HttpError(400, 'INVALID_CODE', 'The code is wrong or has expired');
+    const id = req.body.identifier.toLowerCase();
+    const user = await prisma.user.findFirst({ where: { ...(id.includes('@') ? { email: id } : { mobile: id }), status: 'ACTIVE' } });
+    if (!user) throw invalid;
+    const reset = await prisma.passwordReset.findFirst({ where: { userId: user.id, usedAt: null, expiresAt: { gt: new Date() } }, orderBy: { createdAt: 'desc' } });
+    if (!reset || reset.attempts >= 5) throw invalid;
+    const ok = timingSafeEqual(Buffer.from(reset.codeHash), Buffer.from(hashToken(`${user.id}:${req.body.code}`)));
+    if (!ok) {
+      await prisma.passwordReset.update({ where: { id: reset.id }, data: { attempts: { increment: 1 } } });
+      throw invalid;
+    }
+    const passwordHash = await hashPassword(req.body.password);
+    await prisma.$transaction(async (tx) => {
+      // Conditional claim so the same code cannot be used twice concurrently.
+      const claimed = await tx.passwordReset.updateMany({ where: { id: reset.id, usedAt: null }, data: { usedAt: new Date() } });
+      if (claimed.count === 0) throw invalid;
+      await tx.user.update({ where: { id: user.id }, data: { passwordHash } });
+      await tx.session.updateMany({ where: { userId: user.id, revokedAt: null }, data: { revokedAt: new Date() } });
+      await notify(tx, { userId: user.id, type: 'ACCOUNT', titleKey: 'passwordChanged.title', bodyKey: 'passwordChanged.body' });
+      await audit(tx, { actorId: user.id, action: 'password.reset', entityType: 'User', entityId: user.id, ip: req.ip });
+    });
+    return { ok: true };
+  });
+
+  /** OTP login is an interface only until an SMS provider is configured; it never pretends to send. */
   app.post('/otp/request', { ...strict, schema: { body: z.object({ channel: z.enum(['sms', 'email']), destination: z.string().max(200) }) } }, async () => {
     throw new HttpError(501, 'OTP_NOT_CONFIGURED', 'OTP login is not available yet. Please use your password.');
   });

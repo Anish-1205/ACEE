@@ -32,6 +32,7 @@ export default function Login() {
         <Field testID="identifier" label={t('authentication:identifier')} autoCapitalize="none" autoComplete="username" keyboardType="email-address" value={identifier} onChangeText={setIdentifier} />
         <Field testID="password" label={t('authentication:password')} secureTextEntry autoComplete="password" value={password} onChangeText={setPassword} onSubmitEditing={submit} />
         <Button testID="login" title={t('authentication:loginButton')} onPress={submit} loading={busy} disabled={!identifier || !password} />
+        <Button variant="outline" title={t('authentication:forgotPassword')} onPress={() => router.push('/forgot-password')} />
         <Button variant="outline" title={t('authentication:createAccount')} onPress={() => router.replace('/register')} />
       </Card>
     </Screen>

@@ -26,7 +26,7 @@ The app is the **student portal** of the existing website, served from its own s
 What lives where:
 - **Main site** keeps About, Contact (`contact.php`), study destinations, visas, migration, branches, reviews and blog. The portal header/footer link there, and portal `/about`, `/contact`, `/countries` redirect there (307).
 - **Portal** owns the scholarship scheme page, eligibility checker, coaching registration, counseling booking, student/staff logins and dashboards. Only these pages are in its sitemap, so there is no duplicate content with the main site.
-- The portal header shows the main site's logo, loaded from `/img/AACEEREVVIEW_LOGO.svg` on www.aceereviewconsultants.com. Before production, copy that file into `apps/web/public/` so the portal does not depend on the main site being up.
+- The ACEE logo is stored in the portal (`apps/web/public/acee-logo.svg`, emblem in `acee-emblem.svg`). The Android icon, adaptive icon and splash are generated from these with `pnpm --filter @acee/mobile icons`.
 
 Links to add on the main site (suggested):
 - Header button **Student Portal** → `https://portal.aceereviewconsultants.com/login`
@@ -40,7 +40,17 @@ Example:
 <a href="https://portal.aceereviewconsultants.com/eligibility" class="btn">Check Scholarship Eligibility</a>
 ```
 
-The main site's "Send Your Message" form is separate. If ACEE wants those leads in the portal's admin console, it can post to `POST /api/v1/inquiries` (fields: name, mobile, email, interest, message, consent).
+The main site's "Send Your Message" form can also feed the portal's admin **Leads** list. The API accepts cross-origin posts only from `INQUIRY_ORIGINS` (default: both main-site hostnames). Example for the main site's developer:
+
+```js
+fetch('https://api.aceereviewconsultants.com/api/v1/inquiries', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ name, mobile, email, interest: 'COACHING', message, consent: true, source: 'main-site' }),
+});
+```
+
+`interest` is one of `SCHOLARSHIP`, `COACHING`, `ADMISSION`, `OTHER`; `mobile` is a 10-digit Indian number; `consent` must be the visitor ticking a consent box. Rate limit: 5 per minute per visitor.
 
 ## Database & migrations
 
@@ -63,7 +73,7 @@ pnpm --filter @acee/api prisma:deploy
 NODE_ENV=production pnpm --filter @acee/api start
 ```
 
-Required env: see `.env.example`. In production set `WEB_ORIGINS` and `PUBLIC_WEB_URL` to the real HTTPS origin, keep `STORAGE_LOCAL_DIR` on a persistent private volume, and keep secrets in the host's secret manager (never in the repo). Health check: `GET /health`. OpenAPI: `/docs` (restrict or disable publicly if preferred).
+Required env: see `.env.example`. **`SMTP_URL` is required in production**: without it, students cannot reset forgotten passwords. Use a transactional email provider and set `MAIL_FROM` to an address on ACEE's domain (with SPF/DKIM configured so codes do not land in spam). In production set `WEB_ORIGINS` and `PUBLIC_WEB_URL` to the real HTTPS origin, keep `STORAGE_LOCAL_DIR` on a persistent private volume, and keep secrets in the host's secret manager (never in the repo). Health check: `GET /health`. OpenAPI: `/docs` (restrict or disable publicly if preferred).
 
 Only one API instance is supported today (local-disk storage, in-process reminder timer). To scale out, add an S3-compatible `StorageDriver` and move reminders to a scheduled job.
 

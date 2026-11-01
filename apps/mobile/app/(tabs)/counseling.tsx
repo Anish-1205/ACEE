@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Linking, Pressable, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { APPOINTMENT_TYPES, colors, type Appointment, type Slot } from '@acee/shared';
@@ -23,12 +23,16 @@ export default function Counseling() {
   const [slot, setSlot] = useState<Slot | null>(null);
   const [questions, setQuestions] = useState('');
   const [msg, setMsg] = useState<{ tone: 'success' | 'danger'; text: string }>();
-  const slots = useQuery({ queryKey: ['slots', date], queryFn: () => api.get<{ items: Slot[] }>(`/counseling/slots?date=${date}`) });
+  const [rescheduling, setRescheduling] = useState<Appointment | null>(null);
+  const counselorId = rescheduling?.counselor.id;
+  const slots = useQuery({ queryKey: ['slots', date, counselorId], queryFn: () => api.get<{ items: Slot[] }>(`/counseling/slots?date=${date}${counselorId ? `&counselorId=${counselorId}` : ''}`) });
   const mine = useQuery({ queryKey: ['appointments'], queryFn: () => api.get<{ items: Appointment[] }>('/appointments/mine') });
   const refresh = () => { qc.invalidateQueries({ queryKey: ['slots'] }); qc.invalidateQueries({ queryKey: ['appointments'] }); qc.invalidateQueries({ queryKey: ['dashboard'] }); };
   const book = useMutation({
-    mutationFn: () => api.post('/appointments', { counselorId: slot!.counselorId, startsAt: slot!.startsAt, type, mode, questions }),
-    onSuccess: () => { setMsg({ tone: 'success', text: t('counseling:booked') }); setSlot(null); setQuestions(''); refresh(); },
+    mutationFn: () => rescheduling
+      ? api.post(`/appointments/${rescheduling.id}/reschedule`, { startsAt: slot!.startsAt })
+      : api.post('/appointments', { counselorId: slot!.counselorId, startsAt: slot!.startsAt, type, mode, questions }),
+    onSuccess: () => { setMsg({ tone: 'success', text: t(rescheduling ? 'counseling:rescheduled' : 'counseling:booked') }); setSlot(null); setQuestions(''); setRescheduling(null); refresh(); },
     onError: (e) => { setMsg({ tone: 'danger', text: errorText(e) }); refresh(); },
   });
   const cancel = useMutation({ mutationFn: (id: string) => api.post(`/appointments/${id}/cancel`), onSuccess: refresh });
@@ -38,8 +42,13 @@ export default function Counseling() {
     <Screen onRefresh={refresh} refreshing={slots.isRefetching}>
       {msg && <Notice tone={msg.tone} text={msg.text} />}
       <Card>
-        <Choice label={t('counseling:chooseType')} value={type} onChange={setType} options={APPOINTMENT_TYPES.map((k) => ({ value: k, label: t(`counseling:types.${k}`) }))} />
-        <Choice label={t('counseling:chooseMode')} value={mode} onChange={(v) => { setMode(v); setSlot(null); }} options={[{ value: 'ONLINE', label: t('common:online') }, { value: 'OFFLINE', label: t('common:offline') }]} />
+        {rescheduling ? (
+          <>
+            <Notice text={`${t('counseling:reschedule')}: ${formatDateTime(rescheduling.startsAt, lang)} · ${rescheduling.counselor.fullName}`} />
+            <Button variant="outline" title={t('common:cancel')} onPress={() => { setRescheduling(null); setSlot(null); }} />
+          </>
+        ) : <Choice label={t('counseling:chooseType')} value={type} onChange={setType} options={APPOINTMENT_TYPES.map((k) => ({ value: k, label: t(`counseling:types.${k}`) }))} />}
+        {!rescheduling && <Choice label={t('counseling:chooseMode')} value={mode} onChange={(v) => { setMode(v); setSlot(null); }} options={[{ value: 'ONLINE', label: t('common:online') }, { value: 'OFFLINE', label: t('common:offline') }]} />}
         <Text style={s.label}>{t('counseling:chooseDate')}</Text>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
           {days.map((d) => (
@@ -64,8 +73,8 @@ export default function Counseling() {
             })}
           </View>
         )}
-        <Field label={t('counseling:questions')} multiline value={questions} onChangeText={setQuestions} maxLength={2000} />
-        <Button title={t('counseling:book')} onPress={() => book.mutate()} disabled={!slot || !type} loading={book.isPending} />
+        {!rescheduling && <Field label={t('counseling:questions')} multiline value={questions} onChangeText={setQuestions} maxLength={2000} />}
+        <Button title={rescheduling ? t('counseling:reschedule') : t('counseling:book')} onPress={() => book.mutate()} disabled={!slot || (!rescheduling && !type)} loading={book.isPending} />
       </Card>
       <Card>
         <H2>{t('counseling:myAppointments')}</H2>
@@ -75,7 +84,10 @@ export default function Counseling() {
             <View key={a.id} style={{ gap: 4, paddingVertical: 8, borderTopWidth: 1, borderColor: colors.surface }}>
               <View style={s.row}><Text style={[s.p, { fontWeight: '700' }]}>{formatDateTime(a.startsAt, lang)}</Text><Badge tone={a.status === 'BOOKED' ? 'info' : 'neutral'} label={t(`counseling:statuses.${a.status}`)} /></View>
               <P muted>{t(`counseling:types.${a.type}`)} · {a.counselor.fullName}</P>
-              {upcoming && <P muted>{a.mode === 'ONLINE' ? (a.meetingLink ?? t('counseling:meetingLinkPending')) : t('counseling:officeVisit')}</P>}
+              {upcoming && (a.mode === 'ONLINE' && a.meetingLink
+                ? <Button variant="gold" title={t('counseling:meetingLink')} onPress={() => Linking.openURL(a.meetingLink!)} />
+                : <P muted>{a.mode === 'ONLINE' ? t('counseling:meetingLinkPending') : t('counseling:officeVisit')}</P>)}
+              {upcoming && <Button variant="outline" title={t('counseling:reschedule')} onPress={() => { setRescheduling(a); setMode(a.mode as 'ONLINE' | 'OFFLINE'); setSlot(null); setMsg(undefined); }} />}
               {upcoming && <Button variant="danger" title={t('counseling:cancel')} onPress={() => cancel.mutate(a.id)} loading={cancel.isPending && cancel.variables === a.id} />}
             </View>
           );

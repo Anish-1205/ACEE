@@ -22,10 +22,13 @@ function RootStack() {
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="login" options={{ title: t('navigation:login') }} />
       <Stack.Screen name="register" options={{ title: t('navigation:register') }} />
+      <Stack.Screen name="forgot-password" options={{ title: t('authentication:forgotTitle') }} />
       <Stack.Screen name="eligibility" options={{ title: t('navigation:eligibility') }} />
       <Stack.Screen name="application" options={{ title: t('navigation:application') }} />
       <Stack.Screen name="notifications" options={{ title: t('navigation:notifications') }} />
       <Stack.Screen name="settings" options={{ title: t('navigation:settings') }} />
+      <Stack.Screen name="profile" options={{ title: t('navigation:profile') }} />
+      <Stack.Screen name="legal/[key]" options={{ title: '' }} />
     </Stack>
   );
 }

@@ -2,6 +2,8 @@ import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import { cmsSchema, inquirySchema } from '@acee/shared';
 import { prisma } from '../db';
+import type { FastifyReply, FastifyRequest } from 'fastify';
+import { config } from '../config';
 import { requireRole } from '../lib/auth';
 import { audit } from '../lib/audit';
 import { notFound } from '../lib/errors';
@@ -28,7 +30,24 @@ export const contentRoutes: FastifyPluginAsyncZod = async (app) => {
     };
   });
 
+  /**
+   * The main ACEE website's contact form may post here cross-origin (no cookies), so its leads land in the
+   * portal's admin Leads list. Only origins in INQUIRY_ORIGINS get CORS headers.
+   */
+  const inquiryOrigins = config.INQUIRY_ORIGINS.split(',').map((s) => s.trim());
+  const allowCors = (req: FastifyRequest, reply: FastifyReply) => {
+    const origin = req.headers.origin;
+    if (origin && inquiryOrigins.includes(origin)) {
+      reply.header('Access-Control-Allow-Origin', origin).header('Vary', 'Origin');
+    }
+  };
+  app.options('/inquiries', async (req, reply) => {
+    allowCors(req, reply);
+    return reply.header('Access-Control-Allow-Methods', 'POST').header('Access-Control-Allow-Headers', 'Content-Type').header('Access-Control-Max-Age', '86400').code(204).send();
+  });
+
   app.post('/inquiries', { config: { rateLimit: { max: 5, timeWindow: '1 minute' } }, schema: { body: inquirySchema } }, async (req, reply) => {
+    allowCors(req, reply);
     const { consent: _c, ...b } = req.body;
     await prisma.inquiry.create({ data: { ...b, email: b.email || null, consentAt: new Date(), ip: req.ip } });
     reply.code(201);

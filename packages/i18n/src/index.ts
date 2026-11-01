@@ -45,6 +45,8 @@ const ERROR_KEYS: Record<string, string> = {
   INVALID_FILE_TYPE: "documents:badType",
   FILE_TOO_LARGE: "documents:tooLarge",
   INVITE_INVALID: "authentication:inviteInvalid",
+  INVALID_CODE: "authentication:invalidCode",
+  RESET_UNAVAILABLE: "authentication:resetUnavailable",
   VALIDATION_ERROR: "validation:generic",
 };
 export const errorKeyFor = (code: string): string | undefined => ERROR_KEYS[code];

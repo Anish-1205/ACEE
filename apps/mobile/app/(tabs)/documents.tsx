@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View } from 'react-native';
+import { Alert, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
@@ -22,6 +22,14 @@ export default function Documents() {
   const [msg, setMsg] = useState<{ tone: Tone; text: string }>();
   const q = useQuery({ queryKey: ['documents'], queryFn: () => api.get<{ items: DocumentDto[] }>('/documents/mine') });
 
+  const remove = useMutation({
+    mutationFn: (id: string) => api.del(`/documents/${id}`),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['documents'] }); qc.invalidateQueries({ queryKey: ['dashboard'] }); },
+  });
+  const confirmDelete = (id: string) => Alert.alert(t('common:delete'), t('documents:deleteConfirm'), [
+    { text: t('common:cancel'), style: 'cancel' },
+    { text: t('common:delete'), style: 'destructive', onPress: () => remove.mutate(id) },
+  ]);
   const upload = useMutation({
     mutationFn: ({ category, file }: { category: string; file: Picked }) => {
       const fd = new FormData();
@@ -76,6 +84,7 @@ export default function Documents() {
               <View style={{ flex: 1 }}><Button variant="outline" title={d ? t('documents:reupload') : t('documents:chooseFile')} onPress={() => pickFile(cat)} loading={upload.isPending && upload.variables?.category === cat} /></View>
               <View style={{ flex: 1 }}><Button variant="outline" title={t('documents:takePhoto')} onPress={() => takePhoto(cat)} /></View>
             </View>
+            {d && <Button variant="danger" title={t('common:delete')} onPress={() => confirmDelete(d.id)} loading={remove.isPending && remove.variables === d.id} />}
           </Card>
         );
       })}

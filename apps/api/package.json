@@ -17,6 +17,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@acee/i18n": "workspace:*",
     "@acee/shared": "workspace:*",
     "@fastify/cookie": "^11.1.5",
     "@fastify/helmet": "^13.2.0",
@@ -30,10 +31,12 @@
     "dotenv": "^18.0.9",
     "fastify": "^5.12.7",
     "fastify-type-provider-zod": "^7.0.0",
+    "nodemailer": "^10.3.1",
     "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
+    "@types/nodemailer": "^8.0.2",
     "prisma": "7.10.1",
     "tsx": "^4.23.15"
   }

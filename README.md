@@ -27,8 +27,10 @@ pnpm install
 ```
 
 ```bash
-docker compose up -d db
+docker compose up -d
 ```
+
+This starts PostgreSQL and **Mailpit**, a local mail catcher: every email the app sends in development (password reset codes, notifications) appears at http://localhost:8025.
 
 ```bash
 cp .env.example apps/api/.env

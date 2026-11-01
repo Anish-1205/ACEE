@@ -5,7 +5,7 @@
 | Type checking | `pnpm typecheck` | — | All 5 packages (`tsc --noEmit`). This is also the `lint` script; no ESLint config yet. |
 | Eligibility engine | `pnpm --filter @acee/shared test` | — | Thresholds, boundaries, unknown answers → review, REVIEW vs NOT_MET precedence, category gate, rule schema |
 | Translations | `pnpm --filter @acee/i18n test` | — | te/hi have exactly the English keys, no empty strings, same `{{variables}}`, mostly translated; runtime fallback; INR formatting. Missing keys also fail **compilation** (`te`/`hi` are typed against `en`). |
-| API integration | `pnpm --filter @acee/api test` | Postgres (`docker compose up -d db`) | Runs all migrations on `acee_test` (migration test), then: registration/login, invalid credentials, rate limit, CSRF origin check, refresh rotation + reuse detection, role enforcement, invitations, SC/ST rule versions + history, capacity under concurrency + waitlist promotion, trainer roster/attendance scope, double-booking under concurrency, reschedule, reminders idempotency, counselor scoping, application stage history + hidden internal notes, document isolation (student/trainer/unrelated counselor), magic-byte file validation, audit of downloads |
+| API integration | `pnpm --filter @acee/api test` | Postgres + Mailpit (`docker compose up -d`) | Runs all migrations on `acee_test` (migration test), then: registration/login, invalid credentials, rate limit, CSRF origin check, refresh rotation + reuse detection, role enforcement, invitations, SC/ST rule versions + history, capacity under concurrency + waitlist promotion, trainer roster/attendance scope, double-booking under concurrency, reschedule, reminders idempotency, counselor scoping, application stage history + hidden internal notes, document isolation (student/trainer/unrelated counselor), magic-byte file validation, audit of downloads |
 | Web components | `pnpm --filter @acee/web test` | — | Eligibility result rendering in 3 languages (React Testing Library) |
 | Web E2E | `pnpm --filter @acee/web e2e` | API + web dev servers (auto-started if absent), Playwright Chromium | Full student journey in the browser, admin document review + rule versioning, counselor note, trainer attendance, access control, phone layout. **Reseeds the dev DB.** |
 | Android smoke | `pnpm --filter @acee/mobile smoke` | — | Metro bundles the whole app for Android into Hermes bytecode (catches resolution/compile errors). |
@@ -17,10 +17,11 @@
 | Typecheck (5 packages) | ✅ pass |
 | shared | ✅ 11/11 |
 | i18n | ✅ 11/11 |
-| api | ✅ 22/22 (3 migrations applied to a fresh test DB) |
+| api | ✅ 26/26 (5 migrations applied to a fresh test DB; password reset verified through real email in Mailpit) |
 | web components | ✅ 3/3 |
-| web E2E (Playwright, Chromium desktop + Pixel 7 emulation) | ✅ 9/9 |
-| Android bundle export | ✅ 1351 modules → 3.6 MB Hermes bundle |
+| web E2E (Playwright, Chromium desktop + Pixel 7 emulation) | ✅ 11/11 |
+| Android bundle export | ✅ 1355 modules |
+| CI (`.github/workflows/ci.yml`) | Written, **not yet run on GitHub** — check the first run in the repo's Actions tab |
 | `next build` | ✅ 45 routes |
 
 ## Not run

@@ -9,8 +9,9 @@ export default function More() {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
   const items: [string, Href][] = [
-    [t('navigation:checkEligibility'), '/eligibility'], [t('navigation:application'), '/application'],
+    [t('navigation:profile'), '/profile'], [t('navigation:checkEligibility'), '/eligibility'], [t('navigation:application'), '/application'],
     [t('navigation:notifications'), '/notifications'], [t('navigation:settings'), '/settings'],
+    [t('navigation:privacy'), '/legal/privacy'], [t('navigation:terms'), '/legal/terms'],
   ];
   return (
     <Screen>

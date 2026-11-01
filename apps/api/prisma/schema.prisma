@@ -74,6 +74,7 @@ model User {
   dataRequests        DataRequest[]
   ruleVersions        SchemeRuleVersion[]
   materials           StudyMaterial[]
+  passwordResets      PasswordReset[]
 
   @@index([role, status])
   @@index([createdAt])
@@ -103,6 +104,22 @@ model Session {
 
   @@index([userId])
   @@index([familyId])
+}
+
+/// One-time 6-digit code for "forgot password". Only a hash is stored; 10-minute expiry, 5 attempts.
+model PasswordReset {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  codeHash  String
+  channel   String
+  attempts  Int       @default(0)
+  expiresAt DateTime
+  usedAt    DateTime?
+  ip        String?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, createdAt])
 }
 
 model Invitation {
@@ -595,6 +612,8 @@ model Inquiry {
   email        String?
   interest     String
   message      String        @default("")
+  /// "portal" or "main-site" (the www.aceereviewconsultants.com contact form).
+  source       String        @default("portal")
   status       InquiryStatus @default(NEW)
   consentAt    DateTime
   assignedToId String?

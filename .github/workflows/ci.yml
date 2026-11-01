@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      db:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: acee
+          POSTGRES_PASSWORD: acee_dev_password
+          POSTGRES_DB: acee
+        ports: ["5433:5432"]
+        options: >-
+          --health-cmd "pg_isready -U acee" --health-interval 5s --health-timeout 5s --health-retries 10
+      mail:
+        image: axllent/mailpit:v1.27
+        ports: ["1025:1025", "8025:8025"]
+    env:
+      DATABASE_URL: postgresql://acee:acee_dev_password@localhost:5433/acee
+      SMTP_URL: smtp://localhost:1025
+      CI: "true"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Create test database
+        run: PGPASSWORD=acee_dev_password psql -h localhost -p 5433 -U acee -d acee -c "CREATE DATABASE acee_test"
+      - name: API env
+        run: cp .env.example apps/api/.env
+      - run: pnpm typecheck
+      - run: pnpm test
+      - name: Migrate dev database for end-to-end tests
+        run: pnpm --filter @acee/api prisma:deploy
+      - name: Install Playwright Chromium
+        run: pnpm --filter @acee/web exec playwright install --with-deps chromium
+      - name: End-to-end tests (starts API and web, seeds demo data)
+        run: pnpm --filter @acee/web e2e
+      - name: Android bundle smoke test
+        run: pnpm --filter @acee/mobile smoke
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-results
+          path: apps/web/test-results
+          retention-days: 7

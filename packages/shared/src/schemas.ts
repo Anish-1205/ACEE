@@ -35,6 +35,13 @@ export const loginSchema = z.object({
   client: z.enum(['web', 'mobile']).default('web'),
 });
 
+export const forgotPasswordSchema = z.object({ identifier: z.string().trim().min(3, 'validation:required').max(200) });
+export const resetPasswordSchema = z.object({
+  identifier: z.string().trim().min(3, 'validation:required').max(200),
+  code: z.string().trim().regex(/^\d{6}$/, 'validation:code'),
+  password,
+});
+
 export const refreshSchema = z.object({ refreshToken: z.string().min(20).max(200) });
 
 export const inviteSchema = z.object({
@@ -175,6 +182,7 @@ export const inquirySchema = z.object({
   interest: z.enum(['SCHOLARSHIP', 'COACHING', 'ADMISSION', 'OTHER']),
   message: z.string().trim().max(2000).default(''),
   consent: z.literal(true, 'validation:acceptTerms'),
+  source: z.enum(['portal', 'main-site']).default('portal'),
 });
 export const inquiryUpdateSchema = z.object({
   status: z.enum(['NEW', 'CONTACTED', 'CONVERTED', 'CLOSED']),

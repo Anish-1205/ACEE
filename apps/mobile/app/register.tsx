@@ -71,6 +71,10 @@ export default function Register() {
         {toggle('consentSms', t('authentication:consentSms'))}
         {toggle('consentWhatsapp', t('authentication:consentWhatsapp'))}
         {toggle('consentEmail', t('authentication:consentEmail'))}
+        <View style={{ flexDirection: 'row', gap: 16 }}>
+          <Pressable accessibilityRole="link" onPress={() => router.push('/legal/terms')}><Text style={{ color: colors.royal, textDecorationLine: 'underline' }}>{t('navigation:terms')}</Text></Pressable>
+          <Pressable accessibilityRole="link" onPress={() => router.push('/legal/privacy')}><Text style={{ color: colors.royal, textDecorationLine: 'underline' }}>{t('navigation:privacy')}</Text></Pressable>
+        </View>
         {toggle('acceptTerms', t('authentication:acceptTerms'), errors.acceptTerms)}
         <Button title={t('authentication:registerButton')} onPress={submit} loading={busy} />
       </Card>

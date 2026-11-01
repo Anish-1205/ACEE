@@ -7,7 +7,7 @@ import { formatDateTime, type Lang } from '@acee/i18n';
 import { api } from '@/lib/api';
 import { EmptyState, Input, Loading, PageHeader, Pager, Table, Td } from '@/components/ui';
 
-type Inquiry = { id: string; name: string; mobile: string; email: string | null; interest: string; message: string; status: string; createdAt: string };
+type Inquiry = { id: string; name: string; mobile: string; email: string | null; interest: string; message: string; status: string; source: string; createdAt: string };
 const STATUSES = ['NEW', 'CONTACTED', 'CONVERTED', 'CLOSED'];
 
 export default function AdminInquiriesPage() {
@@ -37,7 +37,7 @@ export default function AdminInquiriesPage() {
             {list.data.items.map((i) => (
               <tr key={i.id}>
                 <Td><b>{i.name}</b><br /><a href={`tel:+91${i.mobile}`} className="text-royal underline">{i.mobile}</a>{i.email && <><br /><span className="text-xs">{i.email}</span></>}</Td>
-                <Td>{t(`common:contactPage.interests.${i.interest}`)}</Td>
+                <Td>{t(`common:contactPage.interests.${i.interest}`)}<br /><span className="text-xs text-muted">{i.source === 'main-site' ? 'aceereviewconsultants.com' : t('common:portalName')}</span></Td>
                 <Td className="max-w-xs">{i.message}</Td>
                 <Td>{formatDateTime(i.createdAt, i18n.language as Lang)}</Td>
                 <Td>

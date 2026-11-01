@@ -44,6 +44,7 @@ function LoginForm() {
         <Input label={t('authentication:identifier')} autoComplete="username" value={identifier} onChange={(e) => setIdentifier(e.target.value)} required />
         <Input label={t('authentication:password')} type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         <Button type="submit" loading={busy} disabled={!identifier || !password}>{t('authentication:loginButton')}</Button>
+        <Link href="/forgot-password" className="text-center text-sm font-semibold text-royal underline">{t('authentication:forgotPassword')}</Link>
       </form>
       <p className="mt-4 text-center text-sm">
         {t('authentication:noAccount')} <Link href="/register" className="font-semibold text-royal underline">{t('authentication:createAccount')}</Link>

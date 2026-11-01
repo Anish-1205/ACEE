@@ -43,7 +43,7 @@ export function SiteHeader() {
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:rounded focus:bg-gold focus:px-3 focus:py-2">{t('common:skipToContent')}</a>
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
         <Link href="/" className="flex items-center gap-2" aria-label={t('common:appName')}>
-          <img src={MAIN_SITE.logo} alt="" width={132} height={25} className="h-6 w-auto" />
+          <img src="/acee-logo.svg" alt="" width={132} height={25} className="h-6 w-auto" />
           <span className="border-l border-line pl-2 text-xs font-semibold leading-tight text-muted">{t('common:portalName')}</span>
         </Link>
         <nav aria-label="Main" className="hidden items-center gap-1 lg:flex">

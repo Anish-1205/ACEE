@@ -50,15 +50,16 @@ Last updated: 2026-11-01. Test evidence: [TESTING.md](TESTING.md).
 
 - 2026-11-01: Positioned as the student portal of www.aceereviewconsultants.com (subdomain). Removed duplicate About/Destinations/Contact pages (redirect to the main site), main-site logo and links in header/footer/Android menu, company hours/email/branches taken from the main site.
 - 2026-11-01: Visual template aligned with www.aceereviewconsultants.com: colours #003A66 / #E02454 / #F0F5FB, Poppins headings + Open Sans text (Noto for Telugu/Hindi), 10px radii, crimson-rule section labels, main-site style footer with social links, floating WhatsApp button. Android shares the same tokens. The brochure palette (navy/gold) from the original brief is replaced.
+- 2026-11-01: Pre-launch features: forgot password by emailed 6-digit code (web + Android; hashed, 10-min expiry, 5 attempts, rate-limited, signs out all sessions); email delivery of notifications in the reader's language (Mailpit in dev); Android profile editing, rescheduling, document delete, meeting-link button, in-app privacy/terms; admin website-content forms instead of JSON; inline document preview (audited as document.view); main-site contact form can post leads (CORS allow-list, source tracked); app icon/splash/favicon from the ACEE logo (`pnpm --filter @acee/mobile icons`); logo served locally; GitHub Actions CI.
 
 ## Known issues & limitations
 
 1. **Android not run on a device/emulator** (no SDK on the build machine) and **no APK/AAB built**.
-2. **External channels** (email, SMS, WhatsApp, push) are adapters that report "not configured"; only in-app notifications are delivered. OTP login returns "not available". `expo-notifications` is not installed yet.
+2. **Email works** (SMTP; Mailpit locally) for password reset and notifications. **SMS, WhatsApp and push** are adapters that report "not configured" until ACEE chooses providers; OTP *login* (as opposed to reset) is not available. `expo-notifications` is not installed yet.
 3. **Storage**: local private disk only; S3-compatible driver not written → single API instance. Appointment reminders run in-process (every 15 min).
 4. **Meeting links** are entered manually by counselors; no calendar/video integration.
 5. **Scheme rules** are seeded from the brochure and marked UNVERIFIED; **company details** unconfirmed. Both need ACEE action.
-6. **Android scope**: student features only (staff use the web console). Profile editing and the terms/privacy pages are not in the Android app yet.
+6. **Android scope**: student features only (staff use the web console). Students cannot view an uploaded file inside the app (they can on the website).
 7. Admin-entered text (rule descriptions, trainer announcements, custom stage names without translations) is shown as entered; a few admin form labels on the stage editor are English-only.
 8. Locale is cookie-based, so every web page is dynamically rendered (no static caching, no per-language URLs/hreflang).
 9. `lint` = TypeScript checks; no ESLint rules configured.

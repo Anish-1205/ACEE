@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20950 4000" width="209.5mm" height="40mm" style="shape-rendering:geometricPrecision;text-rendering:geometricPrecision;fill-rule:evenodd;clip-rule:evenodd">
+  <!-- ACEE Review Consultants logo, from www.aceereviewconsultants.com/img/AACEEREVVIEW_LOGO.svg (embedded SVG fonts removed: browsers ignore them). -->
+  <style>
+    .str0{stroke:#008787;stroke-width:35.27;stroke-linecap:round;stroke-linejoin:round}
+    .str1{stroke:#0F9EB4;stroke-width:35.28;stroke-linecap:round;stroke-linejoin:round}
+    .str2{stroke:#7DC2D4;stroke-width:35.28;stroke-linecap:round;stroke-linejoin:round}
+    .fil0{fill:#008787}.fil1{fill:#0F9EB4}.fil2{fill:#7DC2D4}.fil3{fill:#2BB3D2}.fil4{fill:#2B2A29}
+    .fnt0{font-size:2116.67px;font-family:'Swis721 Blk BT','Arial Black',Arial,sans-serif;font-weight:900}
+    .fnt2{font-size:846.67px;font-family:'Swis721 Hv BT',Arial,sans-serif;font-weight:700}
+  </style>
+  <path class="fil0 str0" d="M1124.88 1292.92c89.62,1069.22 1359.62,575.34 1989.32,937.79 0,0 -131.58,-463.93 -915.6,-567.48 -1333.43,-176.12 -1079.86,-443.61 -1073.72,-370.31z"/>
+  <path class="fil1 str1" d="M1299.32 678c1134.73,766.91 1381.68,273.03 1707.06,1086.8 -291.67,-475.11 -1660.93,55.92 -1707.06,-1086.8z"/>
+  <path class="fil2 str2" d="M1862.8 258.99c285.41,423.07 919.39,237.48 1056.9,1011.51 12.36,69.57 -313.9,-244.86 -596.12,-315.41 -382.64,-95.65 -524.28,-550.62 -460.78,-696.1z"/>
+  <g transform="matrix(0.979806 0 0 1 -6760.89 179.2)"><text x="10475" y="2000" class="fil0 fnt0">ACEE</text></g>
+  <g transform="matrix(0.979806 0 0 1 -294.538 183.05)"><text x="10475" y="2000" class="fil3 fnt0">REVIEW</text></g>
+  <g transform="matrix(1 0 0 1 -1826.56 1466.89)"><text x="10475" y="2000" class="fil4 fnt2">CONSULTANTS Pvt. Ltd.</text></g>
+</svg>

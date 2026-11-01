@@ -55,7 +55,6 @@ export const MAIN_SITE = {
   about: 'https://www.aceereviewconsultants.com/about',
   contact: 'https://www.aceereviewconsultants.com/contact.php',
   destinations: 'https://www.aceereviewconsultants.com/study-steps#countryselection',
-  logo: 'https://www.aceereviewconsultants.com/img/AACEEREVVIEW_LOGO.svg',
   whatsapp: 'https://wa.me/918465903456',
   social: {
     facebook: 'https://www.facebook.com/acereviewconsultants/',

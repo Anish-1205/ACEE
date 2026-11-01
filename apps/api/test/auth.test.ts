@@ -76,6 +76,52 @@ describe('registration and login', () => {
   });
 });
 
+/** Reads the newest email to `to` from Mailpit (docker compose service `mail`). */
+async function latestCode(to: string): Promise<string> {
+  for (let i = 0; i < 20; i++) {
+    const list = await (await fetch(`http://localhost:8025/api/v1/search?query=${encodeURIComponent(`to:${to}`)}`)).json() as { messages: { ID: string }[] };
+    if (list.messages?.length) {
+      const msg = await (await fetch(`http://localhost:8025/api/v1/message/${list.messages[0]!.ID}`)).json() as { Text: string };
+      return /\b(\d{6})\b/.exec(msg.Text)![1]!;
+    }
+    await new Promise((r) => setTimeout(r, 250));
+  }
+  throw new Error(`no email for ${to}`);
+}
+
+describe('forgot password', () => {
+  it('emails a code that resets the password once and signs out other sessions', async () => {
+    const u = await makeUser();
+    const other = await as(app, u);
+    const res = await app.inject({ method: 'POST', url: '/api/v1/auth/password/forgot', remoteAddress: ip(), payload: { identifier: u.mobile } });
+    expect(res.json()).toEqual({ ok: true, channel: 'email' });
+    const code = await latestCode(u.email);
+
+    const wrong = await app.inject({ method: 'POST', url: '/api/v1/auth/password/reset', remoteAddress: ip(), payload: { identifier: u.email, code: code === '000000' ? '111111' : '000000', password: 'BrandNewPass9' } });
+    expect(wrong.json().code).toBe('INVALID_CODE');
+    const ok = await app.inject({ method: 'POST', url: '/api/v1/auth/password/reset', remoteAddress: ip(), payload: { identifier: u.email, code, password: 'BrandNewPass9' } });
+    expect(ok.statusCode).toBe(200);
+    expect((await app.inject({ method: 'POST', url: '/api/v1/auth/password/reset', remoteAddress: ip(), payload: { identifier: u.email, code, password: 'AnotherPass99' } })).statusCode).toBe(400);
+
+    expect((await other('GET', '/auth/me')).statusCode).toBe(401);
+    const login = await app.inject({ method: 'POST', url: '/api/v1/auth/login', remoteAddress: ip(), payload: { identifier: u.email, password: 'BrandNewPass9' } });
+    expect(login.statusCode).toBe(200);
+  });
+
+  it('answers the same for unknown accounts and locks a code after 5 wrong tries', async () => {
+    const unknown = await app.inject({ method: 'POST', url: '/api/v1/auth/password/forgot', remoteAddress: ip(), payload: { identifier: 'nobody@nowhere.test' } });
+    expect(unknown.json()).toEqual({ ok: true, channel: 'email' });
+
+    const u = await makeUser();
+    await app.inject({ method: 'POST', url: '/api/v1/auth/password/forgot', remoteAddress: ip(), payload: { identifier: u.email } });
+    const code = await latestCode(u.email);
+    const bad = code === '000000' ? '111111' : '000000';
+    for (let i = 0; i < 5; i++) await app.inject({ method: 'POST', url: '/api/v1/auth/password/reset', remoteAddress: ip(), payload: { identifier: u.email, code: bad, password: 'BrandNewPass9' } });
+    const locked = await app.inject({ method: 'POST', url: '/api/v1/auth/password/reset', remoteAddress: ip(), payload: { identifier: u.email, code, password: 'BrandNewPass9' } });
+    expect(locked.json().code).toBe('INVALID_CODE');
+  });
+});
+
 describe('mobile refresh token rotation', () => {
   it('rotates refresh tokens and revokes the family on reuse', async () => {
     const u = await makeUser();

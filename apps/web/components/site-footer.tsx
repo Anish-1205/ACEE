@@ -22,7 +22,7 @@ export async function SiteFooter() {
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <span className="inline-block rounded-md bg-white px-3 py-2">
-            <img src={MAIN_SITE.logo} alt="ACEE Review Consultants" width={150} height={29} className="h-7 w-auto" />
+            <img src="/acee-logo.svg" alt="ACEE Review Consultants" width={150} height={29} className="h-7 w-auto" />
           </span>
           <p className="mt-4 text-sm">{t('common:tagline')}</p>
           <div className="mt-5 flex gap-2">

@@ -65,14 +65,16 @@ export const documentRoutes: FastifyPluginAsyncZod = async (app) => {
     return { items: docs.map(({ reviews, ...d }) => ({ ...d, rejectionReason: reviews[0]?.decision === 'REJECTED' ? reviews[0].reason : null })) };
   });
 
-  app.get('/documents/:id/download', { schema: { params: id } }, async (req, reply) => {
+  app.get('/documents/:id/download', { schema: { params: id, querystring: z.object({ inline: z.enum(['1']).optional() }) } }, async (req, reply) => {
+    const inline = req.query.inline === '1';
     const user = requireAuth(req);
     const doc = await loadForAccess(user, req.params.id);
     const data = await storage.get(doc.storageKey).catch(() => { throw new HttpError(410, 'FILE_MISSING', 'File is no longer available'); });
-    await audit(prisma, { actorId: user.id, action: 'document.download', entityType: 'Document', entityId: doc.id, ip: req.ip, metadata: { ownerId: doc.ownerId } });
+    await audit(prisma, { actorId: user.id, action: inline ? 'document.view' : 'document.download', entityType: 'Document', entityId: doc.id, ip: req.ip, metadata: { ownerId: doc.ownerId } });
     return reply
       .header('Content-Type', doc.mimeType)
-      .header('Content-Disposition', `attachment; filename="${doc.fileName.replace(/"/g, '')}"`)
+      .header('Content-Disposition', `${inline ? 'inline' : 'attachment'}; filename="${doc.fileName.replace(/"/g, '')}"`)
+      // Inline viewing is safe because only magic-byte-verified PDF/JPEG/PNG are stored and served with their exact type + nosniff.
       .header('Cache-Control', 'private, no-store')
       .header('X-Content-Type-Options', 'nosniff')
       .send(data);

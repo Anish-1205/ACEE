@@ -84,6 +84,7 @@ function DocumentsContent() {
             </div>
             <div className="mt-3 flex flex-wrap items-start gap-2">
               <UploadButton category={cat} label={d ? t('documents:reupload') : t('documents:upload')} />
+              {d && <a href={`/api/v1/documents/${d.id}/download?inline=1`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center rounded-xl px-4 text-sm font-semibold text-royal underline">{t('documents:view')} ↗</a>}
               {d && <a href={`/api/v1/documents/${d.id}/download`} className="inline-flex min-h-11 items-center rounded-xl px-4 text-sm font-semibold text-royal underline">{t('common:download')}</a>}
               {d && <ConfirmButton message={t('documents:deleteConfirm')} onConfirm={() => remove.mutate(d.id)}>{t('common:delete')}</ConfirmButton>}
             </div>
