@@ -5,15 +5,16 @@ import { useTranslation } from 'react-i18next';
 
 const cx = (...c: (string | false | null | undefined)[]) => c.filter(Boolean).join(' ');
 
+// Main-site styling: crimson call-to-action ("gold" = the prominent CTA), dark blue for standard actions.
 const variants = {
-  primary: 'bg-royal text-white hover:bg-navy',
-  gold: 'bg-gold text-navy hover:brightness-95',
+  primary: 'bg-navy text-white hover:bg-royal',
+  gold: 'bg-crimson text-white hover:brightness-110',
   outline: 'border border-line bg-white text-navy hover:border-royal',
   ghost: 'text-royal hover:bg-royal/10',
   danger: 'bg-danger text-white hover:brightness-110',
 };
 type Variant = keyof typeof variants;
-const base = 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60';
+const base = 'inline-flex min-h-11 items-center justify-center gap-2 rounded-[10px] px-4 py-2 font-heading text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60';
 
 export function Button({ variant = 'primary', loading, className, children, ...p }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant; loading?: boolean }) {
   return (
@@ -180,7 +181,7 @@ export function PageHeader({ title, subtitle, action }: { title: ReactNode; subt
 export function Progress({ value, label }: { value: number; label?: string }) {
   return (
     <div role="progressbar" aria-valuenow={value} aria-valuemin={0} aria-valuemax={100} aria-label={label} className="h-2.5 w-full overflow-hidden rounded-full bg-line">
-      <div className="h-full rounded-full bg-gold transition-all" style={{ width: `${value}%` }} />
+      <div className="h-full rounded-full bg-crimson transition-all" style={{ width: `${value}%` }} />
     </div>
   );
 }

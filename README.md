@@ -2,7 +2,7 @@
 
 *From Our Village to a Global Future*
 
-Multilingual (English / తెలుగు / हिन्दी) website, staff console and Android app for **ACEE Review Consultants Pvt. Ltd.**: free coaching registration, preliminary scholarship eligibility screening (Dr. B.R. Ambedkar Overseas Vidya Nidhi), counseling bookings, private document uploads and application-assistance tracking.
+Student portal extension of **https://www.aceereviewconsultants.com**, intended for **portal.aceereviewconsultants.com**: a multilingual (English / తెలుగు / हिन्दी) website, staff console and Android app for **ACEE Review Consultants Pvt. Ltd.**: free coaching registration, preliminary scholarship eligibility screening (Dr. B.R. Ambedkar Overseas Vidya Nidhi), counseling bookings, private document uploads and application-assistance tracking.
 
 > ACEE Global Education is operated by a private company. It is **not** a Government of Telangana portal. Eligibility results are preliminary; official applications go through https://telanganaepass.cgg.gov.in/.
 

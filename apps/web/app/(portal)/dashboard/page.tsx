@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-import { REQUIRED_DOCUMENTS, missingRequiredDocuments, type AnnouncementDto, type Appointment, type Enrollment, type Me, type Stage } from '@acee/shared';
+import { MAIN_SITE, REQUIRED_DOCUMENTS, missingRequiredDocuments, type AnnouncementDto, type Appointment, type Enrollment, type Me, type Stage } from '@acee/shared';
 import { formatDate, formatDateTime, pickLocalized, type Lang } from '@acee/i18n';
 import { api } from '@/lib/api';
 import { OUTCOME_TONE } from '@/components/eligibility-wizard';
@@ -39,7 +39,7 @@ export default function StudentDashboard() {
     ['/dashboard/profile', 'students:completeProfile', '👤'], ['/dashboard/eligibility', 'navigation:checkEligibility', '✅'],
     ['/coaching', 'students:joinCoaching', '📘'], ['/dashboard/counseling', 'navigation:bookCounseling', '💬'],
     ['/dashboard/documents', 'students:uploadDocuments', '📄'], ['/dashboard/application', 'students:trackApplication', '🧭'],
-    ['/contact', 'students:contactAcee', '📞'],
+    [MAIN_SITE.contact, 'students:contactAcee', '📞'],
   ];
 
   return (
@@ -71,7 +71,7 @@ export default function StudentDashboard() {
         {steps.length === 0 ? <p className="text-sm text-success">{t('students:allDone')}</p> : (
           <ol className="flex flex-col gap-2">
             {steps.map((s, i) => (
-              <li key={s.href}><Link href={s.href} className="flex items-center gap-3 rounded-xl bg-surface p-3 text-sm hover:bg-gold/20"><span className="grid size-7 shrink-0 place-items-center rounded-full bg-gold font-bold text-navy">{i + 1}</span>{s.text}</Link></li>
+              <li key={s.href}><Link href={s.href} className="flex items-center gap-3 rounded-xl bg-surface p-3 text-sm hover:bg-crimson/10"><span className="grid size-7 shrink-0 place-items-center rounded-full bg-crimson font-bold text-white">{i + 1}</span>{s.text}</Link></li>
             ))}
           </ol>
         )}

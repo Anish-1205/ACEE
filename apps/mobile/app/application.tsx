@@ -39,7 +39,7 @@ export default function Application() {
               const current = st.id === app.stage.id;
               return (
                 <View key={st.id} style={[s.row, { justifyContent: 'flex-start', paddingVertical: 4 }]}>
-                  <View style={{ width: 14, height: 14, borderRadius: 7, backgroundColor: current ? colors.gold : done ? colors.success : colors.border }} />
+                  <View style={{ width: 14, height: 14, borderRadius: 7, backgroundColor: current ? colors.crimson : done ? colors.success : colors.border }} />
                   <View style={{ flex: 1 }}>
                     <Text style={[s.p, { fontWeight: current ? '800' : done ? '600' : '400', color: done || current ? colors.ink : colors.muted }]}>{name(st)}</Text>
                     {done && <Text style={{ fontSize: 12, color: colors.muted }}>{formatDateTime(done.createdAt, lang)}</Text>}

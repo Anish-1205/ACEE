@@ -33,7 +33,7 @@ export default function Home() {
       <Card>
         <Text style={s.label}>{t('students:profileCompletion', { pct: d.profileCompletion })}</Text>
         <View style={{ height: 10, borderRadius: 5, backgroundColor: colors.border }} accessibilityRole="progressbar" accessibilityValue={{ min: 0, max: 100, now: d.profileCompletion }}>
-          <View style={{ height: 10, borderRadius: 5, width: `${d.profileCompletion}%`, backgroundColor: colors.gold }} />
+          <View style={{ height: 10, borderRadius: 5, width: `${d.profileCompletion}%`, backgroundColor: colors.crimson }} />
         </View>
       </Card>
       <H2>{t('students:quickActions')}</H2>

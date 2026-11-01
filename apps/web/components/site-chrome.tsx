@@ -3,8 +3,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { homePathForRole } from '@acee/shared';
-import { LANGUAGES } from '@acee/shared';
+import { LANGUAGES, MAIN_SITE, homePathForRole } from '@acee/shared';
 import type { Lang } from '@acee/i18n';
 import { useMe, useSetLanguage } from './providers';
 import { LinkButton, cx } from './ui';
@@ -28,9 +27,10 @@ export function LanguageSwitcher({ className }: { className?: string }) {
   );
 }
 
+/** Portal pages, then links back to the main ACEE website (which owns About, Contact and destinations). */
 const NAV = [
   ['/', 'home'], ['/scholarships', 'scholarships'], ['/eligibility', 'eligibility'], ['/coaching', 'coaching'],
-  ['/countries', 'countries'], ['/counseling', 'counseling'], ['/about', 'about'], ['/contact', 'contact'],
+  ['/counseling', 'counseling'], [MAIN_SITE.about, 'about'], [MAIN_SITE.contact, 'contact'],
 ] as const;
 
 export function SiteHeader() {
@@ -43,18 +43,16 @@ export function SiteHeader() {
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:rounded focus:bg-gold focus:px-3 focus:py-2">{t('common:skipToContent')}</a>
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
         <Link href="/" className="flex items-center gap-2" aria-label={t('common:appName')}>
-          <span className="grid size-10 place-items-center rounded-xl bg-navy text-lg font-black text-gold" aria-hidden>A</span>
-          <span className="leading-tight">
-            <span className="block text-base font-extrabold text-navy">ACEE</span>
-            <span className="block text-xs text-muted">Global Education</span>
-          </span>
+          <img src={MAIN_SITE.logo} alt="" width={132} height={25} className="h-6 w-auto" />
+          <span className="border-l border-line pl-2 text-xs font-semibold leading-tight text-muted">{t('common:portalName')}</span>
         </Link>
         <nav aria-label="Main" className="hidden items-center gap-1 lg:flex">
           {NAV.map(([href, key]) => (
-            <Link key={href} href={href} className={cx('rounded-lg px-3 py-2 text-sm font-medium hover:bg-surface', path === href ? 'text-royal' : 'text-ink')} aria-current={path === href ? 'page' : undefined}>
+            <Link key={href} href={href} className={cx('rounded-lg px-3 py-2 text-sm font-medium hover:bg-surface', path === href ? 'text-crimson' : 'text-ink hover:text-crimson')} aria-current={path === href ? 'page' : undefined}>
               {t(`navigation:${key}`)}
             </Link>
           ))}
+          <a href={MAIN_SITE.url} className="rounded-lg px-3 py-2 text-sm font-medium text-royal hover:bg-surface">{t('navigation:mainSite')} ↗</a>
         </nav>
         <div className="flex items-center gap-2">
           <LanguageSwitcher className="hidden sm:flex" />
@@ -70,6 +68,7 @@ export function SiteHeader() {
           {NAV.map(([href, key]) => (
             <Link key={href} href={href} onClick={() => setOpen(false)} className="block rounded-lg px-3 py-3 text-base font-medium hover:bg-surface">{t(`navigation:${key}`)}</Link>
           ))}
+          <a href={MAIN_SITE.url} className="block rounded-lg px-3 py-3 text-base font-medium text-royal hover:bg-surface">{t('navigation:mainSite')} ↗</a>
           <LanguageSwitcher className="mt-2 px-3" />
         </nav>
       )}

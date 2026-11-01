@@ -53,10 +53,10 @@ export default async function ScholarshipsPage() {
       </section>
 
       <div className="mt-8 flex flex-wrap gap-3">
-        <Link href="/eligibility" className="inline-flex min-h-12 items-center rounded-xl bg-gold px-5 text-sm font-bold text-navy">{t('navigation:checkEligibility')}</Link>
+        <Link href="/eligibility" className="inline-flex min-h-12 items-center rounded-[10px] bg-crimson px-5 font-heading text-sm font-medium text-white">{t('navigation:checkEligibility')}</Link>
         <a href={OFFICIAL_SCHEME_URL} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center rounded-xl bg-royal px-5 text-sm font-bold text-white">{t('scholarships:applyOfficial')} ↗</a>
       </div>
-      <p className="mt-6 rounded-xl border border-gold bg-gold/10 p-4 text-sm">
+      <p className="mt-6 rounded-xl border border-crimson/30 bg-crimson/5 p-4 text-sm">
         {t('common:disclaimerDecision')} <a className="underline" href={OFFICIAL_PORTAL_URL} target="_blank" rel="noopener noreferrer">{t('common:officialPortal')}</a>
       </p>
     </article>

@@ -33,7 +33,7 @@ export function NotificationsPage() {
                 <p className="mt-1 text-xs text-muted">{formatDateTime(n.createdAt, i18n.language as Lang)}</p>
               </>
             );
-            const cls = cx('block rounded-xl border p-4', n.readAt ? 'border-line bg-white' : 'border-gold bg-gold/10');
+            const cls = cx('block rounded-xl border p-4', n.readAt ? 'border-line bg-white' : 'border-crimson/40 bg-crimson/5');
             return <li key={n.id}>{n.link ? <Link href={n.link} className={cls}>{inner}</Link> : <div className={cls}>{inner}</div>}</li>;
           })}
         </ul>

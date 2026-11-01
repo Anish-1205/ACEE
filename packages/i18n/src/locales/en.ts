@@ -1,5 +1,8 @@
 const en = {
   common: {
+    portalName: 'Student Portal',
+    portalIntro: 'This is the ACEE student portal. For all our services, branches and study destinations visit',
+    otherOffices: 'Other offices',
     appName: 'ACEE Global Education',
     company: 'ACEE Review Consultants Pvt. Ltd.',
     tagline: 'From Our Village to a Global Future',
@@ -88,6 +91,7 @@ const en = {
     countries: { US: 'USA', GB: 'UK', CA: 'Canada', AU: 'Australia', DE: 'Germany', NZ: 'New Zealand', SG: 'Singapore', JP: 'Japan', FR: 'France', KR: 'South Korea' },
   },
   navigation: {
+    mainSite: 'ACEE website',
     home: 'Home',
     about: 'About',
     scholarships: 'Scholarships',

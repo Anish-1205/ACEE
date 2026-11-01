@@ -15,16 +15,16 @@ export default function Welcome() {
         <View style={{ flexDirection: 'row', gap: 8, justifyContent: 'flex-end' }} accessibilityRole="radiogroup" accessibilityLabel={t('common:language')}>
           {LANGUAGES.map((l) => (
             <Pressable key={l} testID={`lang-${l}`} accessibilityRole="radio" accessibilityState={{ checked: l === lang }} onPress={() => setLang(l)}
-              style={{ paddingHorizontal: 12, minHeight: 40, justifyContent: 'center', borderRadius: 999, backgroundColor: l === lang ? colors.gold : 'rgba(255,255,255,0.12)' }}>
-              <Text style={{ color: l === lang ? colors.navy : colors.white, fontWeight: '700' }}>{t(`common:languages.${l}`)}</Text>
+              style={{ paddingHorizontal: 12, minHeight: 40, justifyContent: 'center', borderRadius: 999, backgroundColor: l === lang ? colors.crimson : 'rgba(255,255,255,0.12)' }}>
+              <Text style={{ color: colors.white, fontWeight: '700' }}>{t(`common:languages.${l}`)}</Text>
             </Pressable>
           ))}
         </View>
         <View style={{ gap: 12 }}>
-          <View style={{ width: 64, height: 64, borderRadius: 16, backgroundColor: colors.gold, alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ fontSize: 32, fontWeight: '900', color: colors.navy }}>A</Text>
+          <View style={{ width: 64, height: 64, borderRadius: 16, backgroundColor: colors.crimson, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ fontSize: 32, fontWeight: '900', color: colors.white }}>A</Text>
           </View>
-          <Text style={{ color: colors.gold, fontWeight: '700', letterSpacing: 1 }}>{t('common:taglineSub')}</Text>
+          <Text style={{ color: 'rgba(255,255,255,0.8)', fontWeight: '700', letterSpacing: 1 }}>{t('common:taglineSub')}</Text>
           <Text style={{ color: colors.white, fontSize: 32, fontWeight: '900', lineHeight: 42 }} accessibilityRole="header">{t('common:tagline')}</Text>
           <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 16, lineHeight: 24 }}>{t('common:home.heroBody')}</Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>

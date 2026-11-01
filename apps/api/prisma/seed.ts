@@ -146,7 +146,10 @@ async function main() {
         'पिलर नं. 1555, दूसरी मंज़िल, पोचम्मा मंदिर लेन के पास, चैतन्यपुरी, दिलसुखनगर, हैदराबाद, तेलंगाना 500060',
       ),
       website: 'https://www.aceereviewconsultants.com',
-      hours: L('Mon–Sat, 10:00 AM – 5:00 PM', 'సోమ–శని, ఉదయం 10:00 – సాయంత్రం 5:00', 'सोम–शनि, सुबह 10:00 – शाम 5:00'),
+      email: 'info@aceereviewconsultants.com',
+      // Taken from www.aceereviewconsultants.com (2026-11-01).
+      hours: L('Mon–Sat, 9:00 AM – 7:00 PM', 'సోమ–శని, ఉదయం 9:00 – రాత్రి 7:00', 'सोम–शनि, सुबह 9:00 – शाम 7:00'),
+      branches: ['Guntur', 'Vijayawada', 'Kakinada'],
     },
     banner: { active: true, text: L('Free counseling sessions available this month — book online.', 'ఈ నెల ఉచిత కౌన్సెలింగ్ సెషన్లు అందుబాటులో ఉన్నాయి — ఆన్‌లైన్‌లో బుక్ చేయండి.', 'इस महीने निःशुल्क काउंसलिंग सत्र उपलब्ध हैं — ऑनलाइन बुक करें।') },
     about: { body: L(

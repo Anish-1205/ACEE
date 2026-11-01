@@ -50,7 +50,7 @@ export default function ApplicationPage() {
                 const current = app.stage.id === s.id;
                 return (
                   <li key={s.id} className="mb-4 ml-5">
-                    <span className={cx('absolute -left-[9px] mt-1 size-4 rounded-full border-2', current ? 'border-gold bg-gold' : done ? 'border-success bg-success' : 'border-line bg-white')} aria-hidden />
+                    <span className={cx('absolute -left-[9px] mt-1 size-4 rounded-full border-2', current ? 'border-crimson bg-crimson' : done ? 'border-success bg-success' : 'border-line bg-white')} aria-hidden />
                     <p className={cx('text-sm', current ? 'font-extrabold text-navy' : done ? 'font-semibold' : 'text-muted')}>{stageName(s)}</p>
                     {done && <p className="text-xs text-muted">{formatDateTime(done.createdAt, lang)}{done.note ? ` — ${done.note}` : ''}</p>}
                   </li>

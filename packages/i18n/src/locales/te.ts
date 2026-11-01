@@ -2,6 +2,9 @@ import type { Resources } from './en';
 
 const te: Resources = {
   common: {
+    portalName: 'విద్యార్థి పోర్టల్',
+    portalIntro: 'ఇది ACEE విద్యార్థి పోర్టల్. మా అన్ని సేవలు, శాఖలు మరియు చదువు గమ్యస్థానాల కోసం సందర్శించండి',
+    otherOffices: 'ఇతర కార్యాలయాలు',
     appName: 'ACEE గ్లోబల్ ఎడ్యుకేషన్',
     company: 'ACEE రివ్యూ కన్సల్టెంట్స్ ప్రై. లి.',
     tagline: 'మన ఊరి నుండి ప్రపంచ భవిష్యత్తు వైపు',
@@ -90,6 +93,7 @@ const te: Resources = {
     countries: { US: 'అమెరికా', GB: 'యు.కె.', CA: 'కెనడా', AU: 'ఆస్ట్రేలియా', DE: 'జర్మనీ', NZ: 'న్యూజిలాండ్', SG: 'సింగపూర్', JP: 'జపాన్', FR: 'ఫ్రాన్స్', KR: 'దక్షిణ కొరియా' },
   },
   navigation: {
+    mainSite: 'ACEE వెబ్‌సైట్',
     home: 'హోమ్',
     about: 'మా గురించి',
     scholarships: 'స్కాలర్‌షిప్‌లు',

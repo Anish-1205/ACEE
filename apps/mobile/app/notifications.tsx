@@ -29,7 +29,7 @@ export default function Notifications() {
       {!q.data!.items.length ? <Empty text={t('notifications:empty')} /> : q.data!.items.map((n) => {
         const { title, body } = render(n);
         return (
-          <Card key={n.id} style={n.readAt ? undefined : { borderColor: colors.gold, backgroundColor: '#FFF8E6' }}>
+          <Card key={n.id} style={n.readAt ? undefined : { borderColor: colors.crimson, backgroundColor: '#FDEEF2' }}>
             <View><P style={{ fontWeight: '700' }}>{title}</P><P>{body}</P><P muted>{formatDateTime(n.createdAt, lang)}</P></View>
           </Card>
         );

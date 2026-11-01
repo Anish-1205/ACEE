@@ -34,8 +34,8 @@ export function Card({ children, style }: { children: ReactNode; style?: ViewSty
 
 type Variant = 'primary' | 'gold' | 'outline' | 'danger';
 export function Button({ title, onPress, variant = 'primary', loading, disabled, testID }: { title: string; onPress: () => void; variant?: Variant; loading?: boolean; disabled?: boolean; testID?: string }) {
-  const bg = { primary: colors.royal, gold: colors.gold, outline: colors.white, danger: colors.white }[variant];
-  const fg = { primary: colors.white, gold: colors.navy, outline: colors.navy, danger: colors.danger }[variant];
+  const bg = { primary: colors.navy, gold: colors.crimson, outline: colors.white, danger: colors.white }[variant];
+  const fg = { primary: colors.white, gold: colors.white, outline: colors.navy, danger: colors.danger }[variant];
   return (
     <Pressable testID={testID} accessibilityRole="button" accessibilityState={{ disabled: disabled || loading, busy: loading }} disabled={disabled || loading} onPress={onPress}
       style={({ pressed }) => [s.btn, { backgroundColor: bg, opacity: disabled ? 0.5 : pressed ? 0.85 : 1 }, (variant === 'outline' || variant === 'danger') && { borderWidth: 1, borderColor: variant === 'danger' ? colors.danger : colors.border }]}>

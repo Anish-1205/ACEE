@@ -1,7 +1,7 @@
 import { router, type Href } from 'expo-router';
 import { Linking, Pressable, Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { OFFICIAL_PORTAL_URL, colors } from '@acee/shared';
+import { MAIN_SITE, OFFICIAL_PORTAL_URL, colors } from '@acee/shared';
 import { useAuth } from '@/lib/auth';
 import { Button, Card, P, Screen, s } from '@/components/ui';
 
@@ -24,6 +24,9 @@ export default function More() {
             <Text style={[s.p, { fontWeight: '600' }]}>{label} ›</Text>
           </Pressable>
         ))}
+        <Pressable accessibilityRole="link" onPress={() => Linking.openURL(MAIN_SITE.url)} style={{ minHeight: 56, paddingHorizontal: 16, justifyContent: 'center', borderBottomWidth: 1, borderColor: colors.surface }}>
+          <Text style={[s.p, { fontWeight: '600', color: colors.royal }]}>{t('navigation:mainSite')} ↗</Text>
+        </Pressable>
         <Pressable accessibilityRole="link" onPress={() => Linking.openURL(OFFICIAL_PORTAL_URL)} style={{ minHeight: 56, paddingHorizontal: 16, justifyContent: 'center' }}>
           <Text style={[s.p, { fontWeight: '600', color: colors.royal }]}>{t('common:officialPortal')} ↗</Text>
         </Pressable>

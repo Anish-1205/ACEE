@@ -72,7 +72,7 @@ export default function Eligibility() {
     <Screen>
       <H1>{t('eligibility:title')}</H1>
       <P muted>{t('eligibility:step', { current: step + 1, total: STEPS.length })}</P>
-      <View style={{ height: 8, borderRadius: 4, backgroundColor: colors.border }}><View style={{ height: 8, borderRadius: 4, width: `${((step + 1) / STEPS.length) * 100}%`, backgroundColor: colors.gold }} /></View>
+      <View style={{ height: 8, borderRadius: 4, backgroundColor: colors.border }}><View style={{ height: 8, borderRadius: 4, width: `${((step + 1) / STEPS.length) * 100}%`, backgroundColor: colors.crimson }} /></View>
       <Card>
         {key === 'telanganaResident' && <Choice label={t('eligibility:qResidency')} value={d[key]} onChange={(v) => set(key, v)} options={tri as { value: 'yes' | 'no' | 'unsure'; label: string }[]} />}
         {key === 'category' && <Choice label={t('eligibility:qCategory')} value={d[key]} onChange={(v) => set(key, v)} options={[{ value: 'SC', label: t('eligibility:categorySC') }, { value: 'ST', label: t('eligibility:categoryST') }, { value: 'OTHER', label: t('eligibility:categoryOther') }]} />}

@@ -11,6 +11,37 @@ Android app ─────────────HTTPS────────
 
 Run web and API on the same host (or set `TRUST_PROXY` to the web server's IP) so per-IP rate limits see real client addresses.
 
+## Integration with www.aceereviewconsultants.com
+
+The app is the **student portal** of the existing website, served from its own subdomain. The existing site is not modified except for links.
+
+| Item | Value |
+|---|---|
+| Portal URL | `https://portal.aceereviewconsultants.com` (name is a suggestion) |
+| DNS | One `A`/`CNAME` record for `portal` pointing at the portal server, with HTTPS |
+| Web env | `NEXT_PUBLIC_SITE_URL=https://portal.aceereviewconsultants.com` |
+| API env | `WEB_ORIGINS` and `PUBLIC_WEB_URL` = the portal URL |
+| Cookies | Host-only on the portal subdomain; nothing is shared with or set on the main site |
+
+What lives where:
+- **Main site** keeps About, Contact (`contact.php`), study destinations, visas, migration, branches, reviews and blog. The portal header/footer link there, and portal `/about`, `/contact`, `/countries` redirect there (307).
+- **Portal** owns the scholarship scheme page, eligibility checker, coaching registration, counseling booking, student/staff logins and dashboards. Only these pages are in its sitemap, so there is no duplicate content with the main site.
+- The portal header shows the main site's logo, loaded from `/img/AACEEREVVIEW_LOGO.svg` on www.aceereviewconsultants.com. Before production, copy that file into `apps/web/public/` so the portal does not depend on the main site being up.
+
+Links to add on the main site (suggested):
+- Header button **Student Portal** → `https://portal.aceereviewconsultants.com/login`
+- Scholarship Guidance section → `/scholarships` and **Check Eligibility** → `/eligibility`
+- IELTS / PTE / TOEFL / GRE pages → `/coaching/ielts` (etc.) "Register for free coaching"
+- Book a Free Consultation → `/counseling`
+
+Example:
+
+```html
+<a href="https://portal.aceereviewconsultants.com/eligibility" class="btn">Check Scholarship Eligibility</a>
+```
+
+The main site's "Send Your Message" form is separate. If ACEE wants those leads in the portal's admin console, it can post to `POST /api/v1/inquiries` (fields: name, mobile, email, interest, message, consent).
+
 ## Database & migrations
 
 - Schema: `apps/api/prisma/schema.prisma`; migrations: `apps/api/prisma/migrations/` (versioned SQL, committed).

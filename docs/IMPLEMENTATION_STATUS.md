@@ -48,6 +48,9 @@ Last updated: 2026-11-01. Test evidence: [TESTING.md](TESTING.md).
 
 - 2026-11-01: Document checklist switched to the Telangana ePASS overseas list (14 categories, 7 required); registration now continues to a skippable upload step on web and Android; data migration maps old categories; privacy text and FAQ updated.
 
+- 2026-11-01: Positioned as the student portal of www.aceereviewconsultants.com (subdomain). Removed duplicate About/Destinations/Contact pages (redirect to the main site), main-site logo and links in header/footer/Android menu, company hours/email/branches taken from the main site.
+- 2026-11-01: Visual template aligned with www.aceereviewconsultants.com: colours #003A66 / #E02454 / #F0F5FB, Poppins headings + Open Sans text (Noto for Telugu/Hindi), 10px radii, crimson-rule section labels, main-site style footer with social links, floating WhatsApp button. Android shares the same tokens. The brochure palette (navy/gold) from the original brief is replaced.
+
 ## Known issues & limitations
 
 1. **Android not run on a device/emulator** (no SDK on the build machine) and **no APK/AAB built**.

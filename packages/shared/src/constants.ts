@@ -49,5 +49,21 @@ export const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
 export const APPOINTMENT_TYPES = ['SCHOLARSHIP', 'COACHING', 'ADMISSION', 'GENERAL'] as const;
 export const MODES = ['ONLINE', 'OFFLINE'] as const;
 
+/** The existing ACEE marketing site. This app is its student portal (e.g. portal.aceereviewconsultants.com). */
+export const MAIN_SITE = {
+  url: 'https://www.aceereviewconsultants.com',
+  about: 'https://www.aceereviewconsultants.com/about',
+  contact: 'https://www.aceereviewconsultants.com/contact.php',
+  destinations: 'https://www.aceereviewconsultants.com/study-steps#countryselection',
+  logo: 'https://www.aceereviewconsultants.com/img/AACEEREVVIEW_LOGO.svg',
+  whatsapp: 'https://wa.me/918465903456',
+  social: {
+    facebook: 'https://www.facebook.com/acereviewconsultants/',
+    linkedin: 'https://in.linkedin.com/in/acee-review-245906361',
+    instagram: 'https://www.instagram.com/aceereviewoverseas/',
+    youtube: 'https://www.youtube.com/@Aceereview',
+  },
+} as const;
+
 export const OFFICIAL_PORTAL_URL = 'https://telanganaepass.cgg.gov.in/';
 export const OFFICIAL_SCHEME_URL = 'https://telanganaepass.cgg.gov.in/OverseasLinks.do';
