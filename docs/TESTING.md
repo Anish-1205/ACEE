@@ -15,9 +15,9 @@
 | Suite | Result |
 |---|---|
 | Typecheck (5 packages) | ✅ pass |
-| shared | ✅ 9/9 |
+| shared | ✅ 11/11 |
 | i18n | ✅ 11/11 |
-| api | ✅ 21/21 (2 migrations applied to a fresh test DB) |
+| api | ✅ 22/22 (3 migrations applied to a fresh test DB) |
 | web components | ✅ 3/3 |
 | web E2E (Playwright, Chromium desktop + Pixel 7 emulation) | ✅ 9/9 |
 | Android bundle export | ✅ 1351 modules → 3.6 MB Hermes bundle |

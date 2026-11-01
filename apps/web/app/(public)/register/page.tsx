@@ -33,7 +33,7 @@ export default function RegisterPage() {
       const { user } = await api.post<AuthResponse>('/auth/register', { ...parsed.data, client: 'web' });
       qc.setQueryData(['me'], user);
       document.cookie = `lang=${user.preferredLanguage}; path=/; max-age=31536000; samesite=lax`;
-      router.push('/dashboard');
+      router.push('/dashboard/documents?welcome=1');
       router.refresh();
     } catch (err) {
       setErrors(apiFieldErrors(t, err));

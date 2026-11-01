@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 export default async function CourseDetailPage({ params }: Params) {
   const { code } = await params;
   const { t, lang } = await getT();
-  const data = await publicGet<{ course: Course; batches: Batch[] }>(`/courses/${encodeURIComponent(code)}`, 30);
+  const data = await publicGet<{ course: Course; batches: Batch[] }>(`/courses/${encodeURIComponent(code)}`, 0); // live seats and batch ids
   if (!data) notFound();
   const { course } = data;
   return (

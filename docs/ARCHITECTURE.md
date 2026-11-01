@@ -67,7 +67,7 @@ All checks are in the API (`requireRole`, ownership checks in each query). The c
 ## 5. Privacy posture (DPDP Act 2023 / DPDP Rules 2025 — design intent, not a compliance claim)
 
 - Caste category, income band and marks are collected **only** inside an eligibility check, stored with the assessment (purpose-bound), never on the profile.
-- No Aadhaar, bank, or passport numbers are collected anywhere.
+- No Aadhaar, bank or passport numbers are typed into forms. The document checklist mirrors the ePASS overseas form (passport photo, caste/income certificates, bonafide, ration card, SSC, masked Aadhaar, TC, bank passbook first page, residence certificate, marks memo); 7 are marked required. Registration has a second, skippable step for these uploads.
 - Consent records (purpose, version, timestamp, IP) for terms, privacy and each communication channel.
 - Students can delete documents and request account deletion; admins process deletion requests (documents purged from storage, PII anonymised, audit kept).
 - Every document view/download/review is audit-logged.

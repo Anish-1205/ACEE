@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-import { DOCUMENT_CATEGORIES, type AnnouncementDto, type Appointment, type Enrollment, type Me, type Stage } from '@acee/shared';
+import { REQUIRED_DOCUMENTS, missingRequiredDocuments, type AnnouncementDto, type Appointment, type Enrollment, type Me, type Stage } from '@acee/shared';
 import { formatDate, formatDateTime, pickLocalized, type Lang } from '@acee/i18n';
 import { api } from '@/lib/api';
 import { OUTCOME_TONE } from '@/components/eligibility-wizard';
@@ -25,13 +25,13 @@ export default function StudentDashboard() {
   if (q.error || !q.data) return <ErrorState onRetry={() => q.refetch()} />;
   const d = q.data;
 
-  const uploaded = new Set(d.documents.filter((x) => x.status !== 'REJECTED').map((x) => x.category));
+  const missingDocs = missingRequiredDocuments(d.documents).length;
   const steps = [
     d.profileCompletion < 100 && { href: '/dashboard/profile', text: t('students:stepProfile') },
     !d.latestAssessment && { href: '/dashboard/eligibility', text: t('students:stepEligibility') },
     d.enrollments.length === 0 && { href: '/coaching', text: t('students:stepCoaching') },
     d.appointments.length === 0 && { href: '/dashboard/counseling', text: t('students:stepCounseling') },
-    (!uploaded.has('GRADUATION_MARKSHEET') || !uploaded.has('INCOME_CERTIFICATE')) && { href: '/dashboard/documents', text: t('students:stepDocuments') },
+    missingDocs > 0 && { href: '/dashboard/documents', text: t('students:stepDocuments', { count: missingDocs }) },
     !d.application && { href: '/dashboard/application', text: t('students:stepApplication') },
   ].filter(Boolean) as { href: string; text: string }[];
 
@@ -114,7 +114,7 @@ export default function StudentDashboard() {
 
         <Card title={t('students:documentChecklist')}>
           <ul className="flex flex-col gap-1 text-sm">
-            {DOCUMENT_CATEGORIES.filter((c) => c !== 'OTHER').map((c) => {
+            {REQUIRED_DOCUMENTS.map((c) => {
               const s = d.documents.find((x) => x.category === c)?.status ?? 'MISSING';
               return <li key={c} className="flex items-center justify-between gap-2 py-1"><span>{t(`documents:categories.${c}`)}</span><Badge tone={s === 'APPROVED' ? 'success' : s === 'REJECTED' ? 'danger' : s === 'PENDING' ? 'info' : 'neutral'}>{t(`documents:statuses.${s}`)}</Badge></li>;
             })}

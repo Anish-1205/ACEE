@@ -8,9 +8,12 @@ test('admin sees metrics and reviews a pending document', async ({ page }) => {
   await expect(page).toHaveURL(/\/admin$/);
   await expect(page.getByTestId('metric-students')).not.toHaveText('0');
   await page.goto('/admin/documents');
-  const row = page.getByRole('row', { name: /E2E Student/ });
-  await row.getByRole('button', { name: 'Approve' }).click();
-  await expect(row).toHaveCount(0);
+  const rows = page.getByRole('row', { name: /E2E Student/ });
+  await expect(rows).toHaveCount(2); // caste certificate (registration step) + marks memo
+  await rows.first().getByRole('button', { name: 'Approve' }).click();
+  await expect(rows).toHaveCount(1);
+  await rows.first().getByRole('button', { name: 'Approve' }).click();
+  await expect(rows).toHaveCount(0);
 });
 
 test('admin publishes a new scheme rule version without code changes', async ({ page }) => {

@@ -44,6 +44,10 @@ Last updated: 2026-11-01. Test evidence: [TESTING.md](TESTING.md).
 - `apps/mobile/app/*` (welcome, login, register, eligibility, tabs: home/coaching/counseling/documents/more, application, notifications, settings), `apps/mobile/lib/*`, `apps/mobile/components/ui.tsx`, `app.json`, `eas.json`
 - `docs/*`, `README.md`, `.env.example`, `docker-compose.yml`
 
+## Change log
+
+- 2026-11-01: Document checklist switched to the Telangana ePASS overseas list (14 categories, 7 required); registration now continues to a skippable upload step on web and Android; data migration maps old categories; privacy text and FAQ updated.
+
 ## Known issues & limitations
 
 1. **Android not run on a device/emulator** (no SDK on the build machine) and **no APK/AAB built**.

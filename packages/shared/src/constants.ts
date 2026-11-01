@@ -22,11 +22,26 @@ export const COUNTRY_CODES = COUNTRIES.map((c) => c.code) as string[];
 
 export const COURSE_CODES = ['IELTS', 'PTE', 'TOEFL', 'GRE', 'GMAT'] as const;
 
+/** Mirrors the Telangana ePASS overseas-scholarship upload list (in its order), plus study-abroad extras. */
 export const DOCUMENT_CATEGORIES = [
-  'EDUCATION_CERTIFICATE', 'GRADUATION_MARKSHEET', 'INCOME_CERTIFICATE', 'COMMUNITY_CERTIFICATE',
+  'PASSPORT_PHOTO', 'CASTE_CERTIFICATE', 'INCOME_CERTIFICATE', 'BONAFIDE_CERTIFICATE', 'RATION_CARD',
+  'SSC_CERTIFICATE', 'AADHAAR', 'TRANSFER_CERTIFICATE', 'BANK_PASSBOOK', 'RESIDENCE_CERTIFICATE', 'MARKS_MEMO',
   'OFFER_LETTER', 'EXAM_SCORECARD', 'OTHER',
 ] as const;
 export type DocumentCategory = (typeof DOCUMENT_CATEGORIES)[number];
+
+/** Marked * on the ePASS form. */
+export const REQUIRED_DOCUMENTS: DocumentCategory[] = [
+  'PASSPORT_PHOTO', 'CASTE_CERTIFICATE', 'INCOME_CERTIFICATE', 'BONAFIDE_CERTIFICATE',
+  'SSC_CERTIFICATE', 'BANK_PASSBOOK', 'RESIDENCE_CERTIFICATE',
+];
+
+/** Identity/financial documents: shown with handling guidance (masked Aadhaar, passbook first page only). */
+export const SENSITIVE_DOCUMENTS: DocumentCategory[] = ['AADHAAR', 'BANK_PASSBOOK', 'RATION_CARD'];
+
+/** Statuses that count as "provided" for the required-document checklist. */
+export const missingRequiredDocuments = (docs: { category: string; status: string }[]) =>
+  REQUIRED_DOCUMENTS.filter((c) => !docs.some((d) => d.category === c && (d.status === 'PENDING' || d.status === 'APPROVED')));
 
 export const ALLOWED_UPLOAD_TYPES = ['application/pdf', 'image/jpeg', 'image/png'] as const;
 export const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;

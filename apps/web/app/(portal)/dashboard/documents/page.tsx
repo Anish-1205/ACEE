@@ -1,11 +1,12 @@
 'use client';
-import { useRef, useState } from 'react';
+import { useRef, useState, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ALLOWED_UPLOAD_TYPES, DOCUMENT_CATEGORIES, MAX_UPLOAD_BYTES, type DocumentDto } from '@acee/shared';
+import { ALLOWED_UPLOAD_TYPES, DOCUMENT_CATEGORIES, MAX_UPLOAD_BYTES, REQUIRED_DOCUMENTS, missingRequiredDocuments, type DocumentDto } from '@acee/shared';
 import { formatDate, type Lang } from '@acee/i18n';
 import { api, errorText } from '@/lib/api';
-import { Alert, Badge, Button, Card, ConfirmButton, ErrorState, Loading, PageHeader, type Tone } from '@/components/ui';
+import { Alert, Badge, Button, Card, ConfirmButton, ErrorState, LinkButton, Loading, PageHeader, type Tone } from '@/components/ui';
 
 const TONE: Record<string, Tone> = { PENDING: 'info', APPROVED: 'success', REJECTED: 'danger', MISSING: 'neutral' };
 
@@ -41,30 +42,41 @@ function UploadButton({ category, label }: { category: string; label: string }) 
   );
 }
 
-export default function DocumentsPage() {
+function DocumentsContent() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language as Lang;
   const qc = useQueryClient();
+  const onboarding = useSearchParams().get('welcome') === '1';
   const q = useQuery({ queryKey: ['documents'], queryFn: () => api.get<{ items: DocumentDto[] }>('/documents/mine') });
   const remove = useMutation({ mutationFn: (id: string) => api.del(`/documents/${id}`), onSuccess: () => qc.invalidateQueries({ queryKey: ['documents'] }) });
 
   if (q.isLoading) return <Loading rows={5} />;
   if (q.error) return <ErrorState onRetry={() => q.refetch()} />;
   const current = (cat: string) => q.data!.items.find((d) => d.category === cat && d.status !== 'SUPERSEDED');
+  const missing = missingRequiredDocuments(q.data!.items).length;
 
   return (
     <div className="flex flex-col gap-4">
-      <PageHeader title={t('documents:title')} subtitle={t('documents:subtitle')} />
-      <Alert tone="warning">{t('documents:sensitiveWarning')}</Alert>
+      {onboarding
+        ? <PageHeader title={t('documents:onboardingTitle')} subtitle={<><span className="font-semibold text-royal">{t('documents:onboardingStep')}</span> · {t('documents:onboardingBody')}</>} />
+        : <PageHeader title={t('documents:title')} subtitle={t('documents:subtitle')} />}
+      <Alert tone="info">{t('documents:sensitiveWarning')}</Alert>
+      <Alert tone={missing ? 'warning' : 'success'}>{missing ? t('documents:requiredMissing', { count: missing }) : t('documents:allRequiredDone')}</Alert>
       {remove.error && <Alert tone="danger">{errorText(t, remove.error)}</Alert>}
       {DOCUMENT_CATEGORIES.map((cat) => {
         const d = current(cat);
         const status = d?.status ?? 'MISSING';
+        const required = REQUIRED_DOCUMENTS.includes(cat);
+        const hint = i18n.exists(`documents:hints.${cat}`) ? t(`documents:hints.${cat}`) : null;
         return (
           <Card key={cat}>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <h2 className="font-bold text-navy">{t(`documents:categories.${cat}`)}</h2>
+                <h2 className="font-bold text-navy">
+                  {t(`documents:categories.${cat}`)}{required && <span className="text-danger" aria-hidden> *</span>}{' '}
+                  <Badge tone={required ? 'warning' : 'neutral'}>{required ? t('documents:requiredTag') : t('documents:optionalTag')}</Badge>
+                </h2>
+                {hint && <p className="mt-1 text-xs text-muted">{hint}</p>}
                 {d && <p className="text-xs text-muted">{d.fileName} · {t('documents:version', { version: d.version })} · {formatDate(d.createdAt, lang)}</p>}
                 {d?.rejectionReason && <p className="mt-1 text-sm text-danger">{t('documents:rejectionReason', { reason: d.rejectionReason })}</p>}
               </div>
@@ -78,6 +90,15 @@ export default function DocumentsPage() {
           </Card>
         );
       })}
+      {onboarding && (
+        <div className="sticky bottom-0 flex justify-end gap-3 border-t border-line bg-surface/95 py-3">
+          <LinkButton href="/dashboard" variant={missing ? 'outline' : 'primary'}>{missing ? t('documents:skipForNow') : t('documents:continueToDashboard')}</LinkButton>
+        </div>
+      )}
     </div>
   );
+}
+
+export default function DocumentsPage() {
+  return <Suspense><DocumentsContent /></Suspense>;
 }

@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next';
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ALLOWED_UPLOAD_TYPES, DOCUMENT_CATEGORIES, MAX_UPLOAD_BYTES, type DocumentDto } from '@acee/shared';
+import { ALLOWED_UPLOAD_TYPES, DOCUMENT_CATEGORIES, MAX_UPLOAD_BYTES, REQUIRED_DOCUMENTS, missingRequiredDocuments, type DocumentDto } from '@acee/shared';
+import { router, useLocalSearchParams } from 'expo-router';
 import { formatDate } from '@acee/i18n';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
@@ -14,8 +15,9 @@ const TONE: Record<string, Tone> = { PENDING: 'info', APPROVED: 'success', REJEC
 type Picked = { uri: string; name: string; mimeType: string; size?: number };
 
 export default function Documents() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { lang } = useAuth();
+  const welcome = useLocalSearchParams<{ welcome?: string }>().welcome === '1';
   const qc = useQueryClient();
   const [msg, setMsg] = useState<{ tone: Tone; text: string }>();
   const q = useQuery({ queryKey: ['documents'], queryFn: () => api.get<{ items: DocumentDto[] }>('/documents/mine') });
@@ -55,15 +57,19 @@ export default function Documents() {
   if (q.error) return <Screen><ErrorView onRetry={() => q.refetch()} /></Screen>;
   return (
     <Screen onRefresh={() => q.refetch()} refreshing={q.isRefetching}>
-      <P muted>{t('documents:subtitle')}</P>
-      <Notice tone="warning" text={t('documents:sensitiveWarning')} />
+      {welcome ? <><H2>{`${t('documents:onboardingStep')} · ${t('documents:onboardingTitle')}`}</H2><P>{t('documents:onboardingBody')}</P></> : <P muted>{t('documents:subtitle')}</P>}
+      <Notice text={t('documents:sensitiveWarning')} />
+      {(() => { const n = missingRequiredDocuments(q.data!.items).length; return <Notice tone={n ? 'warning' : 'success'} text={n ? t('documents:requiredMissing', { count: n }) : t('documents:allRequiredDone')} />; })()}
+      {welcome && <Button variant="outline" title={t('documents:skipForNow')} onPress={() => router.replace('/(tabs)')} />}
       {msg && <Notice tone={msg.tone} text={msg.text} />}
       {DOCUMENT_CATEGORIES.map((cat) => {
         const d = q.data!.items.find((x) => x.category === cat && x.status !== 'SUPERSEDED');
         const status = d?.status ?? 'MISSING';
         return (
           <Card key={cat}>
-            <View style={s.row}><View style={{ flex: 1 }}><H2>{t(`documents:categories.${cat}`)}</H2></View><Badge tone={TONE[status]} label={t(`documents:statuses.${status}`)} /></View>
+            <View style={s.row}><View style={{ flex: 1 }}><H2>{t(`documents:categories.${cat}`)}{REQUIRED_DOCUMENTS.includes(cat) ? ' *' : ''}</H2></View><Badge tone={TONE[status]} label={t(`documents:statuses.${status}`)} /></View>
+            <Badge tone={REQUIRED_DOCUMENTS.includes(cat) ? 'warning' : 'neutral'} label={REQUIRED_DOCUMENTS.includes(cat) ? t('documents:requiredTag') : t('documents:optionalTag')} />
+            {i18n.exists(`documents:hints.${cat}`) && <P muted>{t(`documents:hints.${cat}`)}</P>}
             {d && <P muted>{d.fileName} · {formatDate(d.createdAt, lang)}</P>}
             {d?.rejectionReason && <P style={{ color: '#B3261E' }}>{t('documents:rejectionReason', { reason: d.rejectionReason })}</P>}
             <View style={{ flexDirection: 'row', gap: 8 }}>

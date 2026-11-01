@@ -27,7 +27,7 @@ export default function Register() {
     setBusy(true);
     try {
       await register(parsed.data);
-      router.replace('/');
+      router.replace({ pathname: '/(tabs)/documents', params: { welcome: '1' } });
     } catch (e) {
       setFormError(errorText(e));
       setBusy(false);

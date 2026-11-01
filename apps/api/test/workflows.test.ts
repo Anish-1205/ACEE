@@ -157,7 +157,7 @@ describe('application tracking', () => {
 
 describe('documents', () => {
   const pdf = Buffer.from('%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF');
-  const upload = (client: Awaited<ReturnType<typeof as>>, token: string, file: Buffer, filename = 'marks.pdf', category = 'GRADUATION_MARKSHEET') => {
+  const upload = (client: Awaited<ReturnType<typeof as>>, token: string, file: Buffer, filename = 'marks.pdf', category = 'MARKS_MEMO') => {
     const boundary = '----acee';
     const body = Buffer.concat([
       Buffer.from(`--${boundary}\r\nContent-Disposition: form-data; name="category"\r\n\r\n${category}\r\n`),
@@ -201,6 +201,15 @@ describe('documents', () => {
 
     const logs = await prisma.auditLog.findMany({ where: { entityId: docId, action: 'document.download' } });
     expect(logs).toHaveLength(2);
+  });
+
+  it('accepts the ePASS categories (incl. masked Aadhaar) and rejects unknown ones', async () => {
+    const u = await makeUser();
+    const tk = await token(u.email);
+    expect((await upload(null as never, tk, pdf, 'aadhaar.pdf', 'AADHAAR')).statusCode).toBe(201);
+    expect((await upload(null as never, tk, pdf, 'passbook.pdf', 'BANK_PASSBOOK')).statusCode).toBe(201);
+    const old = await upload(null as never, tk, pdf, 'x.pdf', 'GRADUATION_MARKSHEET');
+    expect(old.json().code).toBe('INVALID_CATEGORY');
   });
 
   it('rejects files whose content is not PDF/JPG/PNG regardless of extension', async () => {

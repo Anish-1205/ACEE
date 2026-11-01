@@ -16,8 +16,17 @@ test('a new student registers, checks eligibility, joins coaching, books counsel
   await page.getByLabel('Create a password').fill('E2ePassword123');
   await page.getByRole('checkbox', { name: /I agree to the Terms/ }).check();
   await page.getByRole('button', { name: 'Create account' }).click();
+  // Step 2 of registration: ePASS document checklist
+  await expect(page).toHaveURL(/\/dashboard\/documents\?welcome=1$/);
+  await expect(page.getByRole('heading', { name: 'Upload your documents' })).toBeVisible();
+  await expect(page.getByText('7 required documents still to upload')).toBeVisible();
+  await expect(page.getByText('Aadhaar (masked)')).toBeVisible();
+  await page.getByTestId('upload-CASTE_CERTIFICATE').setInputFiles({ name: 'caste.pdf', mimeType: 'application/pdf', buffer: PDF });
+  await expect(page.getByText('6 required documents still to upload')).toBeVisible();
+  await page.getByRole('link', { name: 'Skip for now' }).click();
   await expect(page).toHaveURL(/\/dashboard$/);
   await expect(page.getByRole('heading', { name: 'Namaste, E2E' })).toBeVisible();
+  await expect(page.getByText('Upload your required scholarship documents (6 remaining).')).toBeVisible();
 
   // Preliminary eligibility (stored with rule version)
   await page.goto('/dashboard/eligibility');
@@ -53,7 +62,7 @@ test('a new student registers, checks eligibility, joins coaching, books counsel
 
   // Document upload
   await page.goto('/dashboard/documents');
-  await page.getByTestId('upload-GRADUATION_MARKSHEET').setInputFiles({ name: 'marks.pdf', mimeType: 'application/pdf', buffer: PDF });
+  await page.getByTestId('upload-MARKS_MEMO').setInputFiles({ name: 'marks.pdf', mimeType: 'application/pdf', buffer: PDF });
   await expect(page.getByText('Uploaded. ACEE will review it soon.')).toBeVisible();
 
   // Application tracking

@@ -37,7 +37,9 @@ This describes design intent; it is not a statement of legal compliance. A quali
 
 ## Data minimisation & DPDP
 
-- ✅ No Aadhaar, bank, passport fields anywhere; UI warns not to upload them
+- ✅ No Aadhaar/bank/passport **number fields** in any form
+- 🟡 Documents follow the Telangana ePASS overseas-scholarship list (ACEE decision, 2026-11-01), which includes Aadhaar, bank passbook and ration card. Safeguards: masked Aadhaar requested, passbook first page only with balance covered, files visible only to admins and the assigned counselor, every access audited, purpose stated on the upload page and in the privacy policy
+- ⬜ Legal review of storing Aadhaar copies (Aadhaar Act / UIDAI rules allow masked copies; confirm before production) and a retention period for these files
 - ✅ Caste category, income and marks are collected only in an eligibility check and stored with that assessment; anonymous checks are not stored
 - ✅ Consent records (purpose, version, time, IP) for terms, privacy, email/SMS/WhatsApp; changeable in settings
 - 🟡 Right of access: `GET /me/export` (JSON download from settings)
